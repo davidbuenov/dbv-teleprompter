@@ -1,6 +1,6 @@
 # DBV PWA Teleprompter
 
-![Teleprompter App Screenshot 1](images/teleprompter2.png) 
+![Teleprompter App Screenshot 1](images/teleprompter1.png) 
 ![Teleprompter App Screenshot 2](images/teleprompter2.png) 
 
 A lightweight, browser-based Progressive Web App (PWA) teleprompter. Paste your text, control speed and font size, and start reading! Works offline after the first visit and can be "installed" on your device.
@@ -73,9 +73,9 @@ A lightweight, browser-based Progressive Web App (PWA) teleprompter. Paste your 
 
 ## 🙏 Acknowledgements
 
-This project was developed by **[Your Name/GitHub Username]**.
+This project was developed by **[David Bueno Vallejo/davidbuenov]**.
 
-Significant portions of the code, including the core logic for the teleprompter, PWA implementation, user interface design, and iterative improvements, were generated and refined with the assistance of **Google's AI (the model you are currently interacting with)**. This was a collaborative effort where the AI provided code generation, debugging help, and architectural suggestions.
+Significant portions of the code, including the core logic for the teleprompter, PWA implementation, user interface design, and iterative improvements, were generated and refined with the assistance of **Google's AI (Gemini 2.5 Pro Preview 05-06)**. This was a collaborative effort where the AI provided code generation, debugging help, and architectural suggestions.
 
 ## 📄 License
 
