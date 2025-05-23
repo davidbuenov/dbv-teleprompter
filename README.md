@@ -1,7 +1,7 @@
 # DBV PWA Teleprompter
 
-![Teleprompter App Screenshot 1]("images/teleprompter2.png") 
-![Teleprompter App Screenshot 2]("images/teleprompter2.png") 
+![Teleprompter App Screenshot 1](images/teleprompter2.png) 
+![Teleprompter App Screenshot 2](images/teleprompter2.png) 
 
 A lightweight, browser-based Progressive Web App (PWA) teleprompter. Paste your text, control speed and font size, and start reading! Works offline after the first visit and can be "installed" on your device.
 
