@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background for the icon (e.g., your theme color) -->
+  <rect width="100" height="100" rx="20" ry="20" fill="#3498db"/>
+
+  <!-- Screen/Device Shape -->
+  <rect x="15" y="15" width="70" height="70" rx="10" ry="10" fill="#FFFFFF" stroke="#2980b9" stroke-width="1.5"/>
+
+  <!-- Text Lines -->
+  <g fill="#4A5568">
+    <rect x="25" y="30" width="50" height="4" rx="1.5"/>
+    <rect x="25" y="40" width="50" height="4" rx="1.5"/>
+    <!-- Focus Line - slightly thicker and a bit darker or primary color -->
+    <rect x="23" y="50" width="54" height="5.5" rx="2" fill="#2c3e50"/>
+    <rect x="25" y="61" width="50" height="4" rx="1.5"/>
+    <rect x="25" y="71" width="50" height="4" rx="1.5" opacity="0.7"/> <!-- Fading out -->
+  </g>
+
+  <!-- Subtle Scroll Arrows (Optional) -->
+  <!-- <path d="M 50 22 l -4 -4 l 4 -4" stroke="#A0AEC0" stroke-width="1.5" fill="none" stroke-linecap="round"/> -->
+  <!-- <path d="M 50 82 l -4 4 l 4 4" stroke="#A0AEC0" stroke-width="1.5" fill="none" stroke-linecap="round"/> -->
+
+</svg>

@@ -1,0 +1,10 @@
+teleprompter/
+├── index.html
+├── style.css
+├── script.js
+├── manifest.json  <-- NEW
+├── sw.js          <-- NEW
+└── icons/         <-- NEW FOLDER
+    ├── icon-192x192.png
+    └── icon-512x512.png
+    └── (add more sizes as needed)

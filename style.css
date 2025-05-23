@@ -1,0 +1,384 @@
+/*
+ * DBV PWA Teleprompter
+ * Copyright (c) 2025 David Bueno Vallejo
+ * Desarrollado por David Bueno Vallejo con la asistencia de la IA de Google.
+ *
+ * Este software se distribuye bajo la Licencia MIT.
+ * Consulta el archivo LICENSE para más detalles:
+ * https://github.com/davidbuenov/DBVTeleprompter/blob/main/LICENSE
+ */
+
+/* Global Resets and Base Styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f7f6; /* Light grayish blue background */
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align to top for longer content */
+    min-height: 100vh;
+    padding: 20px; /* Add padding for smaller screens */
+}
+
+.setup-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 700px;
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #2c3e50; /* Darker blue */
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+header p {
+    font-size: 1.1em;
+    color: #7f8c8d; /* Muted gray */
+}
+
+/* Sections Styling */
+section {
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 1.6em;
+    color: #34495e; /* Slightly lighter dark blue */
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ecf0f1; /* Light gray border */
+    font-weight: 500;
+}
+
+/* Script Input */
+.script-input-section textarea {
+    width: 100%;
+    height: 200px;
+    padding: 15px;
+    border: 1px solid #bdc3c7; /* Light gray border */
+    border-radius: 8px;
+    font-size: 1em;
+    color: #333;
+    background-color: #fdfdfd;
+    resize: vertical;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.script-input-section textarea:focus {
+    border-color: #3498db; /* Blue border on focus */
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+/* Controls Section */
+.control-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 10px 0;
+}
+
+.control-group label {
+    font-size: 1.05em;
+    color: #555;
+    margin-right: 15px;
+    flex-basis: 150px; /* Give labels a consistent width */
+}
+
+.control-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.control-btn {
+    background-color: #e9ecef; /* Light gray for +/- buttons */
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding: 8px 12px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    margin: 0 5px;
+    min-width: 40px;
+    text-align: center;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.control-btn:hover {
+    background-color: #d3d9df;
+    border-color: #adb5bd;
+}
+
+.control-value {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #3498db; /* Blue for value display */
+    min-width: 40px;
+    text-align: center;
+    padding: 0 10px;
+}
+
+.control-group small {
+    color: #95a5a6; /* Muted gray for hints */
+    font-size: 0.9em;
+    margin-left: 10px;
+    flex-basis: 120px; /* Give hints a consistent width */
+    text-align: right;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+button { /* General button reset, specific styles below */
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.primary-button {
+    background-color: #3498db; /* Primary blue */
+    color: white;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
+}
+
+.primary-button:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+    box-shadow: 0 6px 15px rgba(41, 128, 185, 0.3);
+    transform: translateY(-2px);
+}
+
+.primary-button:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.2);
+}
+
+.secondary-button {
+    background-color: transparent;
+    color: #3498db;
+    padding: 10px 20px;
+    font-size: 1em;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.secondary-button:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: #2980b9;
+    border-color: #2980b9;
+}
+
+
+/* Key Configuration Section */
+.key-config-section {
+    background-color: #f8f9fa; /* Very light gray background for this section */
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #e9ecef;
+}
+.key-config-instructions {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #555;
+}
+.key-config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.key-config-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #dde2e5;
+}
+
+.key-config-item label {
+    flex-basis: 120px; /* Adjust as needed */
+    margin-right: 10px;
+    font-size: 0.95em;
+    color: #444;
+}
+
+.key-config-item input[type="text"] {
+    flex-grow: 1;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    background-color: #fdfdfd;
+    color: #3498db;
+    font-weight: 500;
+    text-align: center;
+}
+.key-config-item input[type="text"]:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+}
+
+.key-config-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.tertiary-button, .tertiary-button-alt {
+    background-color: #6c757d; /* Gray */
+    color: white;
+    padding: 10px 20px;
+    font-size: 0.95em;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.tertiary-button:hover {
+    background-color: #5a6268;
+}
+.tertiary-button-alt {
+    background-color: transparent;
+    color: #6c757d;
+    border: 1px solid #6c757d;
+}
+.tertiary-button-alt:hover {
+    background-color: rgba(108, 117, 125, 0.1);
+}
+
+/* Instructions Footer */
+.instructions-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ecf0f1;
+    font-size: 0.9em;
+    color: #7f8c8d;
+}
+.instructions-footer p {
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 10px;
+}
+.instructions-footer ul {
+    list-style: none;
+    padding-left: 0;
+}
+.instructions-footer li {
+    margin-bottom: 5px;
+}
+.instructions-footer li strong {
+    color: #3498db; /* Blue for key display */
+    font-weight: 500;
+    display: inline-block;
+    min-width: 70px; /* Ensure alignment */
+}
+
+
+/* Teleprompter View Styles (Unchanged from original) */
+#teleprompter-view {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: white;
+    overflow: hidden;
+    font-size: 40px; /* Default font size */
+    text-align: center;
+    z-index: 1000;
+}
+
+#teleprompter-text {
+    position: relative;
+    padding: 40vh 5vw; /* Vertical padding to center text initially, horizontal for margins */
+    white-space: pre-wrap; /* Preserve line breaks and spaces */
+    line-height: 1.5;
+    transition: transform 0.1s linear; /* Smooth nudging */
+}
+
+#focus-indicator {
+    position: fixed;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-left: 20px solid red; /* Red triangle */
+    z-index: 1001;
+}
+
+/* Responsive adjustments for setup screen */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    .container {
+        padding: 20px;
+    }
+    header h1 {
+        font-size: 2em;
+    }
+    .control-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .control-group label {
+        margin-bottom: 8px;
+    }
+    .control-group small {
+        text-align: left;
+        margin-left: 0;
+        margin-top: 5px;
+    }
+    .action-buttons {
+        flex-direction: column;
+    }
+    .key-config-grid {
+        grid-template-columns: 1fr; /* Stack key config items on small screens */
+    }
+}
