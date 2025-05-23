@@ -1,7 +1,7 @@
 {
-  "name": "Simple Teleprompter",
-  "short_name": "Teleprompter",
-  "description": "A simple teleprompter app for pasting and scrolling text.",
+  "name": "DBV Teleprompter",
+  "short_name": "DBVTeleprompter",
+  "description": "A simple and powerful teleprompter app for pasting and scrolling text.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#f4f7f6",
