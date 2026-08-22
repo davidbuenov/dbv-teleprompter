@@ -25,8 +25,8 @@
 - [x] **Tamaño de fuente ajustable:** Botones en pantalla + atajos de teclado configurables.
 - [x] **Atajos de teclado configurables:** Play/Pausa, velocidad, tamaño de fuente, nudge de texto, salir — personalizables y guardados en `localStorage`.
 - [x] **Modo PWA:** Instalable en escritorio y móvil, funciona offline (app shell cacheada por Service Worker).
-- [ ] **Modo escritorio nativo (Tauri v2):** Empaquetado como binario nativo Windows/macOS/Linux, en modo dual (no sustituye a la PWA). **En curso** — ver `task.md`.
-- [ ] **Publicación en tiendas:** Distribución en Microsoft Store y Uptodown una vez validado que el binario funciona correctamente. **Pendiente**, ver `docs/MARKETPLACE_PUBLISHING.md`.
+- [x] **Modo escritorio nativo (Tauri v2):** Empaquetado como binario nativo, en modo dual (no sustituye a la PWA). **Verificado funcionando en Windows** el 2026-08-22 (UI, controles, scroll, atajos, `localStorage`). Plataformas objetivo: Windows, macOS y Linux — macOS y Linux se compilan en CI y aún no se han probado sobre hardware real.
+- [ ] **Publicación en tiendas:** Distribución en Microsoft Store y Uptodown. **Desbloqueado** — la validación funcional que lo condicionaba ya está hecha. Canal de distribución: GitHub Releases (los 3 workflows generan los instaladores) más las dos tiendas. Ver `docs/MARKETPLACE_PUBLISHING.md`.
 
 ## 🏗️ 4. Propuesta de Solución Técnica (Resumen)
 

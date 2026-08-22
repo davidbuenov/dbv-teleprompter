@@ -4,7 +4,9 @@
   "version": "0.1.0",
   "identifier": "com.davidbuenov.dbv-teleprompter",
   "build": {
-    "frontendDist": ".."
+    "beforeDevCommand": "npm run sync:frontend",
+    "beforeBuildCommand": "npm run sync:frontend",
+    "frontendDist": "frontend"
   },
   "app": {
     "withGlobalTauri": true,

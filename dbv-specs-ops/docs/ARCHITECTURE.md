@@ -12,7 +12,7 @@
 | --- | --- | --- |
 | **Frontend** | HTML5 + CSS3 + JavaScript vanilla (ES, sin bundler) | App ya existente, sin paso de build; mantenerla simple evita añadir una toolchain innecesaria (arquetipo A de `WEB_TO_DESKTOP_MIGRATION.md`) |
 | **PWA** | Web App Manifest + Service Worker (`sw.js`) | Instalación en móvil/escritorio y caché offline del app shell |
-| **Escritorio nativo** | Tauri v2 (Rust 2021) | Empaqueta el mismo frontend estático en binario nativo sin reescribir lógica; `frontendDist` apunta directamente a la raíz del repo |
+| **Escritorio nativo** | Tauri v2 (Rust 2021) | Empaqueta el mismo frontend estático en binario nativo sin reescribir lógica; `frontendDist` apunta a `src-tauri/frontend/`, una copia generada de los ficheros web de la raíz (ver ADR de 2026-08-22 en `memory.md`) |
 | **Persistencia** | `localStorage` del navegador/WebView | Único estado a guardar son los atajos de teclado configurables; no requiere BD |
 | **Autenticación** | Ninguna | App 100% local sin cuentas de usuario |
 | **Testing** | Ninguno todavía | Deuda técnica conocida — ver `docs/SPECIFICATIONS.md` §6 |
@@ -31,8 +31,11 @@
 ├── sw.js                  # Service Worker (caché offline)
 ├── icons/                 # Iconos PWA
 ├── images/                # Capturas usadas en README.md
+├── scripts/
+│   └── sync-frontend.mjs   # Copia los ficheros web de la raíz a src-tauri/frontend/
 ├── src-tauri/              # Core Rust de Tauri (generado por dbv-tauri-starter)
-│   ├── tauri.conf.json     # frontendDist: "..", withGlobalTauri: true
+│   ├── tauri.conf.json     # frontendDist: "frontend", withGlobalTauri: true
+│   ├── frontend/           # GENERADO, git-ignored — lo que Tauri embebe
 │   ├── Cargo.toml
 │   └── src/
 ├── .github/workflows/       # release-windows.yml, release-linux.yml, release-macos.yml
@@ -75,8 +78,9 @@
 ## ⚠️ Restricciones y Riesgos Técnicos
 
 - **Restricción:** Modo dual web+escritorio es obligatorio — la PWA tiene demo pública en GitHub Pages y el propio README anuncia instalación en desktop y móvil; no se puede retirar el modo web sin romper ese caso de uso (ver `docs/WEB_TO_DESKTOP_MIGRATION.md` §3).
-- **Riesgo:** El core de Tauri se ha verificado solo con `cargo check` en un `--target-dir` aislado; no se ha ejecutado `tauri dev` ni probado la app real todavía.
-  - **Mitigación:** Fase de pruebas manuales antes de cerrar la migración (ver `task.md`).
+- **Restricción:** `frontendDist` **no puede apuntar a la raíz del repo**, aunque sea la carpeta que GitHub Pages publica. La raíz contiene `src-tauri/`, y Tauri embebe recursivamente todo lo que hay bajo `frontendDist`: intenta leer `src-tauri/target/debug/.cargo-artifact-lock`, que Cargo mantiene bloqueado, y la compilación muere con `os error 33`. De ahí el paso de sincronización a `src-tauri/frontend/`.
+- **Riesgo (resuelto):** El core de Tauri se había verificado solo con `cargo check`; la app real fallaba con `ERR_CONNECTION_REFUSED` contra `127.0.0.1` por la causa anterior.
+  - **Mitigación aplicada:** `scripts/sync-frontend.mjs` + `beforeDevCommand`/`beforeBuildCommand`. Verificado el 2026-08-22 ejecutando la app: UI completa, controles, scroll, atajos y `localStorage` funcionando.
 - **Riesgo:** Publicación en Microsoft Store / Uptodown puede exigir requisitos de identidad de paquete (MSIX) o firma que hoy no están configurados en `tauri.conf.json`/`Cargo.toml`.
   - **Mitigación:** Checklist de `docs/MARKETPLACE_PUBLISHING.md` antes de generar el paquete de distribución final.
 
