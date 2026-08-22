@@ -1,7 +1,7 @@
 # DBV Teleprompter
 
-![DBV Teleprompter Setup](images/teleprompter1.png)
-![DBV Teleprompter Reading View](images/teleprompter2.png)
+![DBV Teleprompter Setup](docs/screenshots/01_es_setup_dark.png)
+![DBV Teleprompter Reading View](docs/screenshots/04_es_prompter_running.png)
 
 A lightweight, professional teleprompter designed with a **Studio Instrument** interface for video creators, presenters, and streamers. Available both as a modern browser-based Progressive Web App (PWA) and as a standalone native desktop application for Windows, macOS, and Linux.
 
