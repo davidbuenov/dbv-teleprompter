@@ -13,7 +13,9 @@
 | **Frontend** | HTML5 + CSS3 + JavaScript vanilla (ES, sin bundler) | App ya existente, sin paso de build; mantenerla simple evita añadir una toolchain innecesaria (arquetipo A de `WEB_TO_DESKTOP_MIGRATION.md`) |
 | **PWA** | Web App Manifest + Service Worker (`sw.js`) | Instalación en móvil/escritorio y caché offline del app shell |
 | **Escritorio nativo** | Tauri v2 (Rust 2021) | Empaqueta el mismo frontend estático en binario nativo sin reescribir lógica; `frontendDist` apunta a `src-tauri/frontend/`, una copia generada de los ficheros web de la raíz (ver ADR de 2026-08-22 en `memory.md`) |
-| **Persistencia** | `localStorage` del navegador/WebView | Único estado a guardar son los atajos de teclado configurables; no requiere BD |
+| **Persistencia** | `localStorage` del navegador/WebView | Estado local: atajos de teclado (`teleprompterKeyConfig`), tema (`teleprompterTheme`), idioma (`teleprompterLang`), título del guion (`teleprompterScriptTitle`) y último texto (`teleprompterLastText`); no requiere BD |
+| **Internacionalización (i18n)** | Vanilla JS declarativo (`data-i18n*`) + Diccionario de traducción | Cero dependencias; soporte dual ES/EN con detección por `navigator.language` |
+| **Gestión de Archivos (E/S)** | File API nativa web (`FileReader`, `Blob`, Drag & Drop) | Funciona de forma transparente en Web y WebView de escritorio (Tauri) sin plugins pesados ni permisos invasivos |
 | **Autenticación** | Ninguna | App 100% local sin cuentas de usuario |
 | **Testing** | Ninguno todavía | Deuda técnica conocida — ver `docs/SPECIFICATIONS.md` §6 |
 | **CI/CD** | GitHub Actions (`release-windows.yml`, `release-linux.yml`, `release-macos.yml`) | Copiados desde `dbv-tauri-starter`, generan los binarios multiplataforma en cada release |

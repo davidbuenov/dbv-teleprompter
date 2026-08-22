@@ -261,6 +261,13 @@ Por cada app, en orden:
 - [ ] Decisión Rust vs sidecar tomada **por función** y registrada como ADR en `memory.md` (§4).
 - [ ] Si hay sidecar: estrategia de instalación elegida (§5) y proceso hijo con cierre explícito verificado.
 - [ ] `tauri.conf.json`: `productName`, `identifier` e iconos propios de la app (no los de la plantilla).
+- [ ] **DoD de Experiencia de Escritorio pulida cumplida** (`NATIVE_DESKTOP_APPS.md` §7):
+  - [ ] Diálogos de archivos nativos del SO (`rfd` en Tauri, `showSaveFilePicker` en Web con fallback a Blob).
+  - [ ] Atajos de teclado universales (`⌘S`/`Ctrl+S`, `⌘O`/`Ctrl+O`, `⌘Enter`, `Escape`) funcionando incluso dentro de inputs.
+  - [ ] Iconos propios generados desde vector maestro (`app-icon.svg` → `npx tauri icon`) para todas las plataformas y tiendas.
+  - [ ] Menú de aplicación nativo configurado en macOS (`tauri::menu::Menu::default()`).
+  - [ ] Scrollbars estilizadas acordes al tema y layout adaptativo al 100% del viewport sin huecos rotos.
+  - [ ] Tooltips y atributos `aria-label`/`title` indicando los atajos de teclado.
 - [ ] Modo web verificado **después** de la migración: sigue arrancando y funcionando (§3).
 - [ ] Build local en las tres plataformas o, en su defecto, primer tag `vX.Y.Z` con los 3 workflows en verde.
 - [ ] `SPECIFICATIONS.md` actualizado: el escritorio es un requisito nuevo, no un detalle de despliegue.

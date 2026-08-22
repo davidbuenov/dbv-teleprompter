@@ -21,8 +21,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 
-    <!-- Sets data-theme before first paint (stored preference, else system), so the app never
-         flashes the wrong theme for a frame. Kept out of script.js on purpose: it must run before
+    <!-- Sets data-theme and lang before first paint (stored preference, else system), so the app never
+         flashes the wrong theme or language. Kept out of script.js on purpose: it must run before
          style.css is even requested. -->
     <script>
         (function () {
@@ -32,7 +32,13 @@
                     ? stored
                     : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
                 document.documentElement.setAttribute('data-theme', theme);
-            } catch (e) { /* localStorage unavailable — default dark CSS applies */ }
+
+                var storedLang = localStorage.getItem('teleprompterLang');
+                var lang = (storedLang === 'es' || storedLang === 'en')
+                    ? storedLang
+                    : ((navigator.language && navigator.language.toLowerCase().startsWith('es')) ? 'es' : 'en');
+                document.documentElement.setAttribute('lang', lang);
+            } catch (e) { /* localStorage unavailable — default CSS / attributes apply */ }
         })();
     </script>
 
@@ -44,66 +50,77 @@
             <div class="brand-mark" aria-hidden="true"><span class="brand-dot"></span></div>
             <div class="brand-text">
                 <div class="brand-title">DBV Teleprompter</div>
-                <div class="brand-subtitle">Untitled script</div>
+                <input type="text" id="script-title-input" class="brand-subtitle-input" placeholder="Untitled script" data-i18n-placeholder="header.subtitle" spellcheck="false" autocomplete="off" aria-label="Script title" data-i18n-aria="header.titleAria">
             </div>
             <div class="header-spacer"></div>
             <div class="header-actions">
+                <div id="lang-switcher" class="segmented-switcher" role="group" aria-label="Idioma / Language">
+                    <button id="lang-es" class="lang-btn" type="button">ES</button>
+                    <button id="lang-en" class="lang-btn" type="button">EN</button>
+                </div>
                 <button id="theme-toggle" class="ghost-btn" type="button">Light</button>
-                <button id="show-key-config" class="ghost-btn" type="button" onclick="toggleKeyConfig()">Keys</button>
+                <button id="show-key-config" class="ghost-btn" type="button" onclick="toggleKeyConfig()" data-i18n="header.keys" data-i18n-title="header.keysTitle">Keys</button>
             </div>
         </header>
 
         <div class="workspace">
-            <section class="script-panel">
+            <section class="script-panel" id="script-panel">
                 <div class="script-panel-header">
-                    <label for="text-input" class="eyebrow">Script</label>
+                    <label for="text-input" class="eyebrow" data-i18n="script.label">Script</label>
+                    <div class="rule"></div>
+                    <div class="script-file-actions">
+                        <button id="btn-open-file" class="action-link-btn" type="button" data-i18n="file.open" data-i18n-aria="file.openAria" data-i18n-title="file.openTitle">Open</button>
+                        <span class="action-sep" aria-hidden="true">·</span>
+                        <button id="btn-save-file" class="action-link-btn" type="button" data-i18n="file.save" data-i18n-aria="file.saveAria" data-i18n-title="file.saveTitle">Save</button>
+                        <input type="file" id="file-input" accept=".txt,.md,text/plain,text/markdown" style="display: none;">
+                    </div>
                     <div class="rule"></div>
                     <div class="script-stats" id="script-stats">0 words · 0:00</div>
                 </div>
-                <textarea id="text-input" spellcheck="false" placeholder="Paste your script here…"></textarea>
+                <textarea id="text-input" spellcheck="false" placeholder="Paste your script here…" data-i18n-placeholder="script.placeholder"></textarea>
             </section>
 
             <aside class="inspector">
                 <div class="control-block">
-                    <div class="eyebrow">Scroll speed</div>
+                    <div class="eyebrow" data-i18n="controls.speed">Scroll speed</div>
                     <div class="stepper">
-                        <button class="stepper-btn" onclick="changeSpeed(-0.1)" aria-label="Decrease scroll speed">&minus;</button>
+                        <button class="stepper-btn" onclick="changeSpeed(-0.1)" aria-label="Decrease scroll speed" data-i18n-aria="controls.speed_decrease">&minus;</button>
                         <div class="stepper-value" id="speed-display" aria-live="polite">1.0×</div>
-                        <button class="stepper-btn" onclick="changeSpeed(0.1)" aria-label="Increase scroll speed">+</button>
+                        <button class="stepper-btn" onclick="changeSpeed(0.1)" aria-label="Increase scroll speed" data-i18n-aria="controls.speed_increase">+</button>
                     </div>
                 </div>
 
                 <div class="control-block">
-                    <div class="eyebrow">Font size</div>
+                    <div class="eyebrow" data-i18n="controls.fontsize">Font size</div>
                     <div class="stepper">
-                        <button class="stepper-btn" onclick="changeFontSize(-2)" aria-label="Decrease font size">&minus;</button>
+                        <button class="stepper-btn" onclick="changeFontSize(-2)" aria-label="Decrease font size" data-i18n-aria="controls.fontsize_decrease">&minus;</button>
                         <div class="stepper-value" id="fontsize-display" aria-live="polite">40</div>
-                        <button class="stepper-btn" onclick="changeFontSize(2)" aria-label="Increase font size">+</button>
+                        <button class="stepper-btn" onclick="changeFontSize(2)" aria-label="Increase font size" data-i18n-aria="controls.fontsize_increase">+</button>
                     </div>
                 </div>
 
                 <div class="divider"></div>
 
                 <div class="shortcuts-block">
-                    <div class="eyebrow">While running</div>
+                    <div class="eyebrow" data-i18n="shortcuts.title">While running</div>
                     <div class="shortcut-row">
-                        <span>Play / pause</span>
+                        <span data-i18n="shortcuts.playpause">Play / pause</span>
                         <span class="keys"><kbd id="disp-playpause">Space</kbd></span>
                     </div>
                     <div class="shortcut-row">
-                        <span>Speed</span>
+                        <span data-i18n="shortcuts.speed">Speed</span>
                         <span class="keys"><kbd id="disp-speedup">+</kbd><kbd id="disp-speeddown">-</kbd></span>
                     </div>
                     <div class="shortcut-row">
-                        <span>Font size</span>
+                        <span data-i18n="shortcuts.fontsize">Font size</span>
                         <span class="keys"><kbd id="disp-fontup">PageUp</kbd><kbd id="disp-fontdown">PageDown</kbd></span>
                     </div>
                     <div class="shortcut-row">
-                        <span>Nudge</span>
+                        <span data-i18n="shortcuts.nudge">Nudge</span>
                         <span class="keys"><kbd id="disp-nudgeforward">ArrowDown</kbd><kbd id="disp-nudgebackward">ArrowUp</kbd></span>
                     </div>
                     <div class="shortcut-row">
-                        <span>Exit</span>
+                        <span data-i18n="shortcuts.exit">Exit</span>
                         <span class="keys"><kbd id="disp-exit">Escape</kbd></span>
                     </div>
                 </div>
@@ -112,10 +129,10 @@
 
         <footer class="transport">
             <span class="status-dot" aria-hidden="true"></span>
-            <span class="status-label">Ready</span>
+            <span class="status-label" data-i18n="transport.ready">Ready</span>
             <div class="transport-spacer"></div>
-            <button class="ghost-btn transport-btn" type="button" onclick="toggleKeyConfig()">Configure keys</button>
-            <button id="start-button" class="primary-btn">Start prompter</button>
+            <button class="ghost-btn transport-btn" type="button" onclick="toggleKeyConfig()" data-i18n="transport.configure_keys">Configure keys</button>
+            <button id="start-button" class="primary-btn" data-i18n="transport.start" data-i18n-title="transport.startTitle">Start prompter</button>
         </footer>
     </div>
 
@@ -124,49 +141,49 @@
     <div class="key-config-overlay" id="key-config-overlay" onclick="toggleKeyConfig()"></div>
     <aside class="key-config-panel" id="key-config-container" aria-hidden="true">
         <div class="key-config-panel-header">
-            <h2>Key configuration</h2>
-            <button class="icon-btn" type="button" onclick="toggleKeyConfig()" aria-label="Close">&times;</button>
+            <h2 data-i18n="keyconfig.title">Key configuration</h2>
+            <button class="icon-btn" type="button" onclick="toggleKeyConfig()" aria-label="Close" data-i18n-aria="keyconfig.close">&times;</button>
         </div>
-        <p class="key-config-instructions">Click a field and press the key you want to assign.</p>
+        <p class="key-config-instructions" data-i18n="keyconfig.instructions">Click a field and press the key you want to assign.</p>
         <div class="key-config-list">
             <div class="key-config-item">
-                <label for="key-playpause">Play / Pause</label>
+                <label for="key-playpause" data-i18n="keyconfig.playpause">Play / Pause</label>
                 <input type="text" id="key-playpause" readonly>
             </div>
             <div class="key-config-item">
-                <label for="key-speedup">Speed up</label>
+                <label for="key-speedup" data-i18n="keyconfig.speedup">Speed up</label>
                 <input type="text" id="key-speedup" readonly>
             </div>
             <div class="key-config-item">
-                <label for="key-speeddown">Speed down</label>
+                <label for="key-speeddown" data-i18n="keyconfig.speeddown">Speed down</label>
                 <input type="text" id="key-speeddown" readonly>
             </div>
             <div class="key-config-item">
-                <label for="key-fontup">Font up</label>
+                <label for="key-fontup" data-i18n="keyconfig.fontup">Font up</label>
                 <input type="text" id="key-fontup" readonly>
             </div>
             <div class="key-config-item">
-                <label for="key-fontdown">Font down</label>
+                <label for="key-fontdown" data-i18n="keyconfig.fontdown">Font down</label>
                 <input type="text" id="key-fontdown" readonly>
             </div>
             <div class="key-config-item">
-                <label for="key-nudgeforward">Nudge forward</label>
+                <label for="key-nudgeforward" data-i18n="keyconfig.nudgeforward">Nudge forward</label>
                 <input type="text" id="key-nudgeforward" readonly>
             </div>
             <div class="key-config-item">
-                <label for="key-nudgebackward">Nudge back</label>
+                <label for="key-nudgebackward" data-i18n="keyconfig.nudgebackward">Nudge back</label>
                 <input type="text" id="key-nudgebackward" readonly>
             </div>
             <div class="key-config-item">
-                <label for="key-exit">Exit prompter</label>
+                <label for="key-exit" data-i18n="keyconfig.exit">Exit prompter</label>
                 <input type="text" id="key-exit" readonly>
             </div>
         </div>
         <div class="key-config-actions">
-            <button onclick="saveKeyConfig()" class="primary-btn">Save config</button>
-            <button onclick="loadKeyConfig(true)" class="ghost-btn">Reset defaults</button>
+            <button onclick="saveKeyConfig()" class="primary-btn" data-i18n="keyconfig.save">Save config</button>
+            <button onclick="loadKeyConfig(true)" class="ghost-btn" data-i18n="keyconfig.reset">Reset defaults</button>
         </div>
-        <p class="credits">
+        <p class="credits" data-i18n-html="keyconfig.credits">
             Built by <a href="https://davidbuenov.com" target="_blank" rel="noopener noreferrer">David Bueno Vallejo</a>
             · <a href="https://github.com/davidbuenov/dbv-teleprompter" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
         </p>

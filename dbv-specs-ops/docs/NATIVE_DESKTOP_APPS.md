@@ -223,5 +223,32 @@ silencio o con un error que no apunta a la causa real.
    tabla de diferencias de motores (WebView2/WebKitGTK/WKWebView) contra cada API nueva que uses, no solo al
    final.
 
+## 7. Checklist de Calidad y Definición de Hecho (DoD) de Experiencia de Escritorio
+
+Cualquier aplicación de escritorio basada en `dbv-specs-ops` / Tauri v2 DEBE cumplir esta lista de verificación antes de considerarse completa o lista para publicación:
+
+1. **Diálogos de Archivos Nativos del SO (Abrir / Guardar):**
+   - No usar descargas ciegas de navegador (`<a download>`) como único mecanismo.
+   - En escritorio (Tauri): usar comandos Rust con `rfd` (Rust File Dialog) para abrir el cuadro de diálogo nativo del Explorador de Windows, Finder de macOS o selector de Linux.
+   - En la Web/PWA: usar `window.showSaveFilePicker()` (File System Access API) con fallback degradado a Blob.
+2. **Iconografía de Marca Completa (Cero iconos genéricos):**
+   - Nunca dejar los iconos de ejemplo de Tauri (aros azul/naranja).
+   - Crear un icono maestro vectorizado (`app-icon.svg`) coherente con la identidad de la suite y ejecutar `npx tauri icon app-icon.svg` para generar automáticamente todos los tamaños (`.ico` multi-resolución, `.icns`, PNGs de Microsoft Store / Appx y assets Web/PWA).
+3. **Atajos de Teclado Universales (macOS / Windows / Linux):**
+   - Soportar `Cmd` (macOS `event.metaKey`) y `Ctrl` (Windows/Linux `event.ctrlKey`):
+     - `⌘S` / `Ctrl+S`: Guardar archivo.
+     - `⌘O` / `Ctrl+O`: Abrir archivo.
+     - `⌘Enter` / `Ctrl+Enter`: Acción principal / Ejecutar.
+     - `Escape`: Cerrar paneles modales / Salir de vistas inmersivas.
+   - Interceptar con `event.preventDefault()` incluso cuando el foco esté dentro de `<textarea>` o `<input>`.
+4. **Barra de Menús Nativa en macOS:**
+   - Configurar `tauri::menu::Menu::default(_app.handle())` en el hook `.setup()` de Rust para que en macOS funcionen los roles de sistema nativos (Cortar/Copiar/Pegar, `⌘Q`, `⌘W`, `⌘H`) sin requerir configuración manual.
+5. **Scrollbars Integradas y Layout Adaptativo al Viewport:**
+   - Evitar restricciones artificiales de anchura (`max-width: ...ch`) que dejen espacios negros vacíos en pantallas panorámicas.
+   - Estilizar las scrollbars (`scrollbar-width: thin; scrollbar-color: var(--b) transparent;` y `::-webkit-scrollbar`) con pista transparente y tirador acorde al tema para eliminar la barra blanca clásica del SO.
+   - Ajustar el padding de los paneles para que la barra de scroll quede pegada a los divisores sin huecos residuales.
+6. **Tooltips y Accesibilidad en Botones:**
+   - Atributos `title` y `aria-label` localizados en todos los botones de acción indicando el atajo de teclado asociado (ej. `Abrir (Ctrl+O / ⌘O)`).
+
 Para el patrón de CI que compila cada plataforma y las particularidades de cada tienda de apps, ver
 [`NATIVE_APPS_RELEASE_CI.md`](./NATIVE_APPS_RELEASE_CI.md) y [`MARKETPLACE_PUBLISHING.md`](./MARKETPLACE_PUBLISHING.md).

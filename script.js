@@ -8,8 +8,174 @@
  * https://github.com/davidbuenov/dbv-teleprompter/blob/main/LICENSE
  */
 
+// ─────────────────────────────────────────────
+// Translations (i18n) — English & Spanish
+// ─────────────────────────────────────────────
+const translations = {
+    en: {
+        header: {
+            subtitle: 'Untitled script',
+            titleAria: 'Script title',
+            keys: 'Keys',
+            keysTitle: 'Key configuration (Escape to close)',
+            themeLight: 'Light',
+            themeDark: 'Dark',
+            langToggle: 'ES',
+            langAria: 'Switch to Spanish'
+        },
+        script: {
+            label: 'Script',
+            placeholder: 'Paste your script here…',
+            statsWord: 'word',
+            statsWords: 'words'
+        },
+        file: {
+            open: 'Open',
+            openAria: 'Open script file',
+            openTitle: 'Open script (Ctrl+O / ⌘O)',
+            save: 'Save',
+            saveAria: 'Save script to file',
+            saveTitle: 'Save script (Ctrl+S / ⌘S)',
+            loadedToast: 'Script loaded',
+            savedToast: 'Script saved',
+            emptyToast: 'Nothing to save'
+        },
+        controls: {
+            speed: 'Scroll speed',
+            speed_decrease: 'Decrease scroll speed',
+            speed_increase: 'Increase scroll speed',
+            fontsize: 'Font size',
+            fontsize_decrease: 'Decrease font size',
+            fontsize_increase: 'Increase font size'
+        },
+        shortcuts: {
+            title: 'While running',
+            playpause: 'Play / pause',
+            speed: 'Speed',
+            fontsize: 'Font size',
+            nudge: 'Nudge',
+            exit: 'Exit'
+        },
+        transport: {
+            ready: 'Ready',
+            configure_keys: 'Configure keys',
+            start: 'Start prompter',
+            startTitle: 'Start prompter (Ctrl+Enter / ⌘Enter)'
+        },
+        keyconfig: {
+            title: 'Key configuration',
+            close: 'Close',
+            instructions: 'Click a field and press the key you want to assign.',
+            playpause: 'Play / Pause',
+            speedup: 'Speed up',
+            speeddown: 'Speed down',
+            fontup: 'Font up',
+            fontdown: 'Font down',
+            nudgeforward: 'Nudge forward',
+            nudgebackward: 'Nudge back',
+            exit: 'Exit prompter',
+            save: 'Save config',
+            reset: 'Reset defaults',
+            credits: 'Built by <a href="https://davidbuenov.com" target="_blank" rel="noopener noreferrer">David Bueno Vallejo</a> · <a href="https://github.com/davidbuenov/dbv-teleprompter" target="_blank" rel="noopener noreferrer">Source on GitHub</a>',
+            pressKey: 'Press a key...',
+            savedToast: 'Key configuration saved',
+            pasteFirstToast: 'Paste your script first'
+        },
+        keys: {
+            space: 'Space'
+        }
+    },
+    es: {
+        header: {
+            subtitle: 'Guion sin título',
+            titleAria: 'Título del guion',
+            keys: 'Teclas',
+            keysTitle: 'Configuración de teclas (Escape para cerrar)',
+            themeLight: 'Claro',
+            themeDark: 'Oscuro',
+            langToggle: 'EN',
+            langAria: 'Cambiar a inglés'
+        },
+        script: {
+            label: 'Guion',
+            placeholder: 'Pega tu guion aquí…',
+            statsWord: 'palabra',
+            statsWords: 'palabras'
+        },
+        file: {
+            open: 'Abrir',
+            openAria: 'Abrir archivo de guion',
+            openTitle: 'Abrir guion (Ctrl+O / ⌘O)',
+            save: 'Guardar',
+            saveAria: 'Guardar guion en archivo',
+            saveTitle: 'Guardar guion (Ctrl+S / ⌘S)',
+            loadedToast: 'Guion cargado',
+            savedToast: 'Guion guardado',
+            emptyToast: 'Nada que guardar'
+        },
+        controls: {
+            speed: 'Velocidad',
+            speed_decrease: 'Disminuir velocidad',
+            speed_increase: 'Aumentar velocidad',
+            fontsize: 'Tamaño de fuente',
+            fontsize_decrease: 'Disminuir tamaño de fuente',
+            fontsize_increase: 'Aumentar tamaño de fuente'
+        },
+        shortcuts: {
+            title: 'Durante la lectura',
+            playpause: 'Reproducir / pausar',
+            speed: 'Velocidad',
+            fontsize: 'Tamaño de fuente',
+            nudge: 'Ajuste fino',
+            exit: 'Salir'
+        },
+        transport: {
+            ready: 'Listo',
+            configure_keys: 'Configurar teclas',
+            start: 'Iniciar teleprompter',
+            startTitle: 'Iniciar teleprompter (Ctrl+Enter / ⌘Enter)'
+        },
+        keyconfig: {
+            title: 'Configuración de teclas',
+            close: 'Cerrar',
+            instructions: 'Haz clic en un campo y presiona la tecla que desees asignar.',
+            playpause: 'Reproducir / Pausar',
+            speedup: 'Aumentar velocidad',
+            speeddown: 'Disminuir velocidad',
+            fontup: 'Aumentar tamaño',
+            fontdown: 'Disminuir tamaño',
+            nudgeforward: 'Avanzar un poco',
+            nudgebackward: 'Retroceder un poco',
+            exit: 'Salir del teleprompter',
+            save: 'Guardar configuración',
+            reset: 'Restablecer por defecto',
+            credits: 'Creado por <a href="https://davidbuenov.com" target="_blank" rel="noopener noreferrer">David Bueno Vallejo</a> · <a href="https://github.com/davidbuenov/dbv-teleprompter" target="_blank" rel="noopener noreferrer">Código en GitHub</a>',
+            pressKey: 'Presiona una tecla...',
+            savedToast: 'Configuración de teclas guardada',
+            pasteFirstToast: 'Pega tu guion primero'
+        },
+        keys: {
+            space: 'Espacio'
+        }
+    }
+};
+
+let currentLang = 'en';
+
+function t(path) {
+    const getVal = (obj) => path.split('.').reduce((o, k) => o?.[k], obj);
+    return getVal(translations[currentLang]) ?? getVal(translations.en) ?? path;
+}
+
+const isTauri = () => typeof window !== 'undefined' && typeof window.__TAURI__?.core?.invoke === 'function';
+
 // DOM Elements
 const textInput = document.getElementById('text-input');
+const scriptTitleInput = document.getElementById('script-title-input');
+const scriptPanel = document.getElementById('script-panel');
+const btnOpenFile = document.getElementById('btn-open-file');
+const btnSaveFile = document.getElementById('btn-save-file');
+const fileInput = document.getElementById('file-input');
 const startButton = document.getElementById('start-button');
 const teleprompterView = document.getElementById('teleprompter-view');
 const teleprompterText = document.getElementById('teleprompter-text');
@@ -20,6 +186,8 @@ const keyConfigContainer = document.getElementById('key-config-container');
 const keyConfigOverlay = document.getElementById('key-config-overlay');
 const scriptStats = document.getElementById('script-stats');
 const themeToggleButton = document.getElementById('theme-toggle');
+const langBtnEs = document.getElementById('lang-es');
+const langBtnEn = document.getElementById('lang-en');
 
 // Toast
 const toastElement = document.getElementById('toast');
@@ -34,7 +202,6 @@ const dispFontDown = document.getElementById('disp-fontdown');
 const dispNudgeFwd = document.getElementById('disp-nudgeforward');
 const dispNudgeBack = document.getElementById('disp-nudgebackward');
 const dispExit = document.getElementById('disp-exit');
-
 
 // State Variables
 let currentSpeed = 1.0; // Pixels per frame
@@ -65,7 +232,240 @@ function updateScriptStats() {
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
 
-    scriptStats.textContent = `${words} word${words === 1 ? '' : 's'} · ${minutes}:${String(seconds).padStart(2, '0')}`;
+    const wordLabel = words === 1 ? t('script.statsWord') : t('script.statsWords');
+    scriptStats.textContent = `${words} ${wordLabel} · ${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
+// ─────────────────────────────────────────────
+// Language & Localization Application
+// ─────────────────────────────────────────────
+function applyLanguage(lang) {
+    currentLang = (lang === 'es' || lang === 'en') ? lang : 'en';
+    document.documentElement.setAttribute('lang', currentLang);
+    try {
+        localStorage.setItem('teleprompterLang', currentLang);
+    } catch (e) { /* localStorage unavailable */ }
+
+    // Update segmented buttons state (active class and aria-pressed)
+    if (langBtnEs && langBtnEn) {
+        langBtnEs.classList.toggle('active', currentLang === 'es');
+        langBtnEn.classList.toggle('active', currentLang === 'en');
+        langBtnEs.setAttribute('aria-pressed', String(currentLang === 'es'));
+        langBtnEn.setAttribute('aria-pressed', String(currentLang === 'en'));
+    }
+
+    // Translate static DOM elements with data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+    });
+
+    // Translate placeholder attributes
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        el.setAttribute('placeholder', t(key));
+    });
+
+    // Translate aria-label attributes
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+        const key = el.getAttribute('data-i18n-aria');
+        el.setAttribute('aria-label', t(key));
+    });
+
+    // Translate HTML contents (e.g. credits with links)
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        el.innerHTML = t(key);
+    });
+
+    // Translate title attributes (tooltips)
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        el.setAttribute('title', t(key));
+    });
+
+    // Refresh theme toggle button label (since words are localized)
+    applyTheme(currentTheme(), false);
+
+    // Refresh dynamic stats
+    updateScriptStats();
+
+    // Refresh key footer display (e.g. Space vs Espacio)
+    updateKeyDisplayFooter();
+}
+
+// ─────────────────────────────────────────────
+// Script Title & File Management (Dual Mode)
+// ─────────────────────────────────────────────
+function loadScriptTitle() {
+    if (!scriptTitleInput) return;
+    const savedTitle = localStorage.getItem('teleprompterScriptTitle');
+    if (savedTitle) {
+        scriptTitleInput.value = savedTitle;
+    }
+}
+
+function saveScriptTitle() {
+    if (!scriptTitleInput) return;
+    localStorage.setItem('teleprompterScriptTitle', scriptTitleInput.value.trim());
+}
+
+function loadFileContent(file) {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const content = event.target.result;
+        textInput.value = content;
+        localStorage.setItem('teleprompterLastText', content);
+
+        // Derive script title from filename without extension
+        const baseName = file.name.replace(/\.[^/.]+$/, "");
+        if (baseName && scriptTitleInput) {
+            scriptTitleInput.value = baseName;
+            saveScriptTitle();
+        }
+
+        updateScriptStats();
+        showToast(`${t('file.loadedToast')}: ${baseName || file.name}`);
+    };
+    reader.onerror = () => {
+        showToast('Error reading file');
+    };
+    reader.readAsText(file);
+}
+
+function handleFileSelect(event) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+        loadFileContent(files[0]);
+    }
+    // Reset file input so selecting the same file again triggers change
+    event.target.value = '';
+}
+
+async function openFileDialog() {
+    // 1. If running in Tauri, use the native OS file picker via Rust command
+    if (isTauri()) {
+        try {
+            const result = await window.__TAURI__.core.invoke('open_file_dialog');
+            if (result) {
+                const [title, content] = result;
+                textInput.value = content;
+                localStorage.setItem('teleprompterLastText', content);
+                if (title && scriptTitleInput) {
+                    scriptTitleInput.value = title;
+                    saveScriptTitle();
+                }
+                updateScriptStats();
+                showToast(`${t('file.loadedToast')}: ${title}`);
+            }
+            return;
+        } catch (err) {
+            console.error('Tauri open dialog error, falling back to web file input:', err);
+        }
+    }
+
+    // 2. Web fallback: click hidden <input type="file">
+    if (fileInput) {
+        fileInput.click();
+    }
+}
+
+async function saveScriptFile() {
+    const text = textInput.value;
+    if (!text.trim()) {
+        showToast(t('file.emptyToast'));
+        textInput.focus();
+        return;
+    }
+
+    const rawTitle = scriptTitleInput?.value.trim();
+    const safeTitle = (rawTitle || t('header.subtitle') || 'script').replace(/[<>:"/\\|?*]+/g, '_');
+    const filename = `${safeTitle}.txt`;
+
+    // 1. If running in Tauri, open the native OS "Save As" file dialog via Rust command
+    if (isTauri()) {
+        try {
+            const saved = await window.__TAURI__.core.invoke('save_file_dialog', {
+                defaultName: filename,
+                content: text
+            });
+            if (saved) {
+                showToast(`${t('file.savedToast')} (${filename})`);
+            }
+            return;
+        } catch (err) {
+            console.error('Tauri save dialog error, falling back to web methods:', err);
+        }
+    }
+
+    // 2. Modern Web Browser: File System Access API (Native "Guardar como..." dialog)
+    if (typeof window.showSaveFilePicker === 'function') {
+        try {
+            const handle = await window.showSaveFilePicker({
+                suggestedName: filename,
+                types: [{
+                    description: 'Text Files (*.txt, *.md)',
+                    accept: { 'text/plain': ['.txt', '.md'] }
+                }]
+            });
+            const writable = await handle.createWritable();
+            await writable.write(text);
+            await writable.close();
+            showToast(`${t('file.savedToast')} (${handle.name || filename})`);
+            return;
+        } catch (err) {
+            if (err.name === 'AbortError') return; // User cancelled the dialog
+            console.warn('showSaveFilePicker failed, falling back to blob download:', err);
+        }
+    }
+
+    // 3. Fallback: Blob download
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = filename;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    showToast(`${t('file.savedToast')} (${filename})`);
+}
+
+function setupDragAndDrop() {
+    if (!scriptPanel) return;
+
+    const preventDefaults = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        window.addEventListener(eventName, preventDefaults, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        scriptPanel.addEventListener(eventName, () => {
+            scriptPanel.classList.add('is-dragover');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        scriptPanel.addEventListener(eventName, () => {
+            scriptPanel.classList.remove('is-dragover');
+        }, false);
+    });
+
+    scriptPanel.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+            loadFileContent(files[0]);
+        }
+    }, false);
 }
 
 // ─────────────────────────────────────────────
@@ -76,15 +476,17 @@ function currentTheme() {
     return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
 }
 
-function applyTheme(theme) {
+function applyTheme(theme, persist = true) {
     document.documentElement.setAttribute('data-theme', theme);
-    try {
-        localStorage.setItem('teleprompterTheme', theme);
-    } catch (e) { /* localStorage unavailable — theme still applies for this session */ }
+    if (persist) {
+        try {
+            localStorage.setItem('teleprompterTheme', theme);
+        } catch (e) { /* localStorage unavailable — theme still applies for this session */ }
+    }
 
     if (themeToggleButton) {
-        // The button always offers the *other* theme, so it reads "Light" while dark is active.
-        themeToggleButton.textContent = theme === 'dark' ? 'Light' : 'Dark';
+        // The button always offers the *other* theme
+        themeToggleButton.textContent = theme === 'dark' ? t('header.themeLight') : t('header.themeDark');
     }
 }
 
@@ -105,15 +507,20 @@ const defaultKeyConfig = {
     exit: 'Escape'
 };
 
+function formatKeyName(keyVal) {
+    if (keyVal === ' ') return t('keys.space');
+    return keyVal;
+}
+
 function updateKeyDisplayFooter() {
-    dispPlayPause.textContent = keyConfig.playPause === ' ' ? 'Space' : keyConfig.playPause;
-    dispSpeedUp.textContent = keyConfig.speedUp === '=' ? '+' : keyConfig.speedUp;
-    dispSpeedDown.textContent = keyConfig.speedDown;
-    dispFontUp.textContent = keyConfig.fontUp;
-    dispFontDown.textContent = keyConfig.fontDown;
-    dispNudgeFwd.textContent = keyConfig.nudgeForward;
-    dispNudgeBack.textContent = keyConfig.nudgeBackward;
-    dispExit.textContent = keyConfig.exit;
+    dispPlayPause.textContent = formatKeyName(keyConfig.playPause || ' ');
+    dispSpeedUp.textContent = keyConfig.speedUp === '=' ? '+' : (keyConfig.speedUp || '+');
+    dispSpeedDown.textContent = keyConfig.speedDown || '-';
+    dispFontUp.textContent = keyConfig.fontUp || 'PageUp';
+    dispFontDown.textContent = keyConfig.fontDown || 'PageDown';
+    dispNudgeFwd.textContent = keyConfig.nudgeForward || 'ArrowDown';
+    dispNudgeBack.textContent = keyConfig.nudgeBackward || 'ArrowUp';
+    dispExit.textContent = keyConfig.exit || 'Escape';
 }
 
 function loadKeyConfig(forceDefaults = false) {
@@ -135,7 +542,7 @@ function loadKeyConfig(forceDefaults = false) {
         keyConfig = { ...defaultKeyConfig };
     }
     // Populate input fields
-    document.getElementById('key-playpause').value = keyConfig.playPause === ' ' ? 'Space' : keyConfig.playPause;
+    document.getElementById('key-playpause').value = formatKeyName(keyConfig.playPause);
     document.getElementById('key-speedup').value = keyConfig.speedUp;
     document.getElementById('key-speeddown').value = keyConfig.speedDown;
     document.getElementById('key-fontup').value = keyConfig.fontUp;
@@ -147,8 +554,9 @@ function loadKeyConfig(forceDefaults = false) {
 }
 
 function saveKeyConfig() {
-    // Read from input fields, handling "Space" display
-    keyConfig.playPause = document.getElementById('key-playpause').value === 'Space' ? ' ' : document.getElementById('key-playpause').value;
+    // Read from input fields, handling localized "Space" / "Espacio"
+    const playPauseInput = document.getElementById('key-playpause').value;
+    keyConfig.playPause = (playPauseInput === 'Space' || playPauseInput === 'Espacio' || playPauseInput === t('keys.space')) ? ' ' : playPauseInput;
     keyConfig.speedUp = document.getElementById('key-speedup').value;
     keyConfig.speedDown = document.getElementById('key-speeddown').value;
     keyConfig.fontUp = document.getElementById('key-fontup').value;
@@ -157,7 +565,7 @@ function saveKeyConfig() {
     keyConfig.nudgeBackward = document.getElementById('key-nudgebackward').value;
     keyConfig.exit = document.getElementById('key-exit').value;
     localStorage.setItem('teleprompterKeyConfig', JSON.stringify(keyConfig));
-    showToast('Key configuration saved');
+    showToast(t('keyconfig.savedToast'));
     updateKeyDisplayFooter();
 }
 
@@ -166,16 +574,16 @@ function setupKeyConfigListeners() {
     inputs.forEach(input => {
         input.addEventListener('focus', () => {
             input.dataset.originalValue = input.value; // Store original value
-            input.value = 'Press a key...';
+            input.value = t('keyconfig.pressKey');
             input.select(); // Select text for easy overwrite
         });
         input.addEventListener('keydown', (event) => {
             event.preventDefault();
-            input.value = event.key === ' ' ? 'Space' : event.key; // Display "Space" for spacebar
+            input.value = event.key === ' ' ? t('keys.space') : event.key;
             input.blur(); // Remove focus after setting
         });
         input.addEventListener('blur', () => { // If blurred without keypress, restore
-            if (input.value === 'Press a key...') {
+            if (input.value === t('keyconfig.pressKey') || input.value === 'Press a key...' || input.value === 'Presiona una tecla...') {
                 input.value = input.dataset.originalValue || 'Unknown';
             }
         });
@@ -191,7 +599,6 @@ function toggleKeyConfig() {
     keyConfigOverlay.classList.toggle('is-open', willOpen);
     keyConfigContainer.setAttribute('aria-hidden', String(!willOpen));
 }
-
 
 // Control Functions
 function updateSpeedDisplay() {
@@ -231,7 +638,6 @@ function scrollLoop() {
     const viewHeight = teleprompterView.clientHeight;
     if (currentScrollY > textHeight + viewHeight * 0.2) {
         stopPrompter();
-        // exitPrompter(); // Optionally exit automatically
     }
     animationFrameId = requestAnimationFrame(scrollLoop);
 }
@@ -239,7 +645,7 @@ function scrollLoop() {
 function startPrompter() {
     const text = textInput.value;
     if (!text.trim()) {
-        showToast('Paste your script first');
+        showToast(t('keyconfig.pasteFirstToast'));
         textInput.focus();
         return;
     }
@@ -301,14 +707,43 @@ function exitPrompter() {
 // Event Listeners
 startButton.addEventListener('click', startPrompter);
 if (themeToggleButton) themeToggleButton.addEventListener('click', toggleTheme);
+if (langBtnEs) langBtnEs.addEventListener('click', () => applyLanguage('es'));
+if (langBtnEn) langBtnEn.addEventListener('click', () => applyLanguage('en'));
+if (btnOpenFile) btnOpenFile.addEventListener('click', openFileDialog);
+if (btnSaveFile) btnSaveFile.addEventListener('click', saveScriptFile);
+if (fileInput) fileInput.addEventListener('change', handleFileSelect);
 
 document.addEventListener('keydown', (event) => {
-    if (document.activeElement && document.activeElement.closest('#key-config-container input[type="text"]')) {
-        return; // Ignore if configuring keys — that input's own listener captures the next keypress
+    const isCmdOrCtrl = event.metaKey || event.ctrlKey;
+
+    // 1. Universal Desktop Shortcuts (Ctrl/Cmd + S to Save, Ctrl/Cmd + O to Open, Ctrl/Cmd + Enter to Start)
+    if (isCmdOrCtrl && !event.altKey && !event.shiftKey) {
+        const keyLower = event.key.toLowerCase();
+        if (keyLower === 's') {
+            event.preventDefault();
+            saveScriptFile();
+            return;
+        }
+        if (keyLower === 'o') {
+            event.preventDefault();
+            openFileDialog();
+            return;
+        }
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            if (teleprompterView.style.display !== 'block') {
+                startPrompter();
+            }
+            return;
+        }
+    }
+
+    if (document.activeElement && (document.activeElement.closest('#key-config-container input[type="text"]'))) {
+        return; // Ignore if actively configuring keys in the key config overlay
     }
 
     // While the key configuration panel is open, only Escape (to close it) is handled here.
-    if (keyConfigContainer.classList.contains('is-open')) {
+    if (keyConfigContainer && keyConfigContainer.classList.contains('is-open')) {
         if (event.key === 'Escape') {
             event.preventDefault();
             toggleKeyConfig();
@@ -316,9 +751,16 @@ document.addEventListener('keydown', (event) => {
         return;
     }
 
+    // If typing in title input and Escape is pressed, blur input
+    if (document.activeElement === scriptTitleInput) {
+        if (event.key === 'Escape') {
+            scriptTitleInput.blur();
+        }
+        return;
+    }
+
     // Make sure keyConfig is loaded
     if (Object.keys(keyConfig).length === 0) loadKeyConfig();
-
 
     if (teleprompterView.style.display === 'block') {
         if (event.key === keyConfig.playPause) { event.preventDefault(); togglePlayPause(); }
@@ -328,10 +770,10 @@ document.addEventListener('keydown', (event) => {
         else if (event.key === keyConfig.fontDown) { event.preventDefault(); changeFontSize(-2); }
         else if (event.key === keyConfig.nudgeForward) { event.preventDefault(); nudgeScroll(-1); }
         else if (event.key === keyConfig.nudgeBackward) { event.preventDefault(); nudgeScroll(1); }
-        else if (event.key === keyConfig.exit) { event.preventDefault(); exitPrompter(); }
+        else if (event.key === keyConfig.exit || event.key === 'Escape') { event.preventDefault(); exitPrompter(); }
     } else if (setupContainer.style.display !== 'none') { // Setup screen is active
         // Allow +/- for speed/font on setup screen IF NOT typing in textarea
-        if (document.activeElement.tagName.toLowerCase() !== 'textarea') {
+        if (document.activeElement && document.activeElement.tagName.toLowerCase() !== 'textarea') {
              if (event.key === keyConfig.speedUp || (keyConfig.speedUp === '=' && event.key === '+')) {
                 event.preventDefault();
                 changeSpeed(0.1);
@@ -351,11 +793,15 @@ document.addEventListener('keydown', (event) => {
 
 // Initial Load
 document.addEventListener('DOMContentLoaded', () => {
+    const initialLang = document.documentElement.getAttribute('lang') || 'en';
+    applyLanguage(initialLang);
     applyTheme(currentTheme()); // sync the toggle button label with the theme set in <head>
     loadKeyConfig();
     setupKeyConfigListeners();
+    setupDragAndDrop();
     updateSpeedDisplay();
     updateFontSizeDisplay();
+    loadScriptTitle();
 
     const savedText = localStorage.getItem('teleprompterLastText');
     if (savedText) {
@@ -367,7 +813,12 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('teleprompterLastText', textInput.value);
         updateScriptStats();
     });
+
+    if (scriptTitleInput) {
+        scriptTitleInput.addEventListener('input', saveScriptTitle);
+    }
 });
+
 // PWA Service Worker Registration — web mode only.
 //
 // In the desktop build the assets already travel inside the binary, so the Service Worker adds

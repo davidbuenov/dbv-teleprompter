@@ -26,6 +26,8 @@
 - [x] **Atajos de teclado configurables:** Play/Pausa, velocidad, tamaño de fuente, nudge de texto, salir — personalizables y guardados en `localStorage`.
 - [x] **Modo PWA:** Instalable en escritorio y móvil, funciona offline (app shell cacheada por Service Worker).
 - [x] **Modo escritorio nativo (Tauri v2):** Empaquetado como binario nativo, en modo dual (no sustituye a la PWA). **Verificado funcionando en Windows** el 2026-08-22 (UI, controles, scroll, atajos, `localStorage`). Plataformas objetivo: Windows, macOS y Linux — macOS y Linux se compilan en CI y aún no se han probado sobre hardware real.
+- [x] **Internacionalización (i18n):** Soporte multi-idioma nativo (Español / Inglés) con detección automática (`navigator.language`), conmutador manual en el header (`.header-actions`), persistencia en `localStorage` y traducción de toda la UI, estimación de tiempo, atajos y toasts. Modo dual Web + Escritorio.
+- [x] **Gestión de archivos y título interactivo:** Subtítulo de guion editable y persistido en `localStorage`, botones de Abrir (`.txt`, `.md`) y Guardar/Exportar (`.txt`), y soporte nativo para arrastrar y soltar (drag & drop) archivos sobre el área de texto. Modo dual transparente Web + Escritorio.
 - [ ] **Publicación en tiendas:** Distribución en Microsoft Store y Uptodown. **Desbloqueado** — la validación funcional que lo condicionaba ya está hecha. Canal de distribución: GitHub Releases (los 3 workflows generan los instaladores) más las dos tiendas. Ver `docs/MARKETPLACE_PUBLISHING.md`.
 
 ## 🏗️ 4. Propuesta de Solución Técnica (Resumen)

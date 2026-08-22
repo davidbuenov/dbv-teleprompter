@@ -24,17 +24,24 @@
   - [x] Sidecar: N/A (no hay).
   - [x] `cargo test` pasa: 2/2 en `tauri_app_lib`, 0 fallos.
   - [x] `git status` no muestra `src-tauri/target/` ni `src-tauri/frontend/` — ambos ignorados correctamente.
-- [ ] **Fase 8 (migración Tauri) — Cierre:** Documentación actualizada (`SPECIFICATIONS.md`, `ARCHITECTURE.md`, `memory.md`, `CHANGELOG.md`) ✅. Pendiente: actualizar `README.md` con instrucciones de instalación de escritorio, y publicar el primer instalador con `git tag v0.1.0 && git push origin v0.1.0`.
-- [x] **Rediseño "Studio instrument" de la pantalla de setup (2026-08-22):** A partir de un handoff de alta fidelidad de Claude Design. Ver `dbv-specs-ops/docs/DESIGN.md`. Incluye tema oscuro/claro persistido, fuentes Newsreader/Nunito autoalojadas en `fonts/` (cierra definitivamente la pregunta de Google Fonts — vendorizadas, no CDN, no eliminadas), panel de teclas convertido a overlay deslizante, estadísticas del guion dependientes de la velocidad. Verificado ejecutando la app: ambos temas, panel de teclas, steppers, vista de prompting heredando color/tipografía. `cargo test` 2/2. Modo web con los 9 recursos (incluidas las 4 fuentes) sirviendo 200.
+- [x] **Fase 8 (migración Tauri) — Cierre:** Documentación actualizada (`SPECIFICATIONS.md`, `ARCHITECTURE.md`, `memory.md`, `CHANGELOG.md`, `NATIVE_APPS_RELEASE_CI.md`, `README.md`) ✅. Listo para publicar el primer release con `git tag v0.2.0 && git push origin v0.2.0`.
+- [x] **Internacionalización (i18n) en modo dual (2026-08-22):** Implementación de soporte multilingüe (Español e Inglés) nativo en Vanilla JS sin dependencias (<2 KB). Detección automática por `navigator.language`, selector interactivo en header (`.header-actions`), persistencia en `localStorage` (`teleprompterLang`), traducción completa de la UI (`data-i18n*`), panel de atajos, toasts y estimación de tiempo. Sincronizado a Tauri con `sync-frontend.mjs` y caché PWA actualizada a v3.1.
+- [x] **Gestión de archivos y título interactivo (2026-08-22):** Input interactivo de título persistido en `localStorage` (`teleprompterScriptTitle`), botones de Abrir (`.txt`, `.md`) y Guardar (`.txt`), soporte de arrastrar y soltar (drag & drop), capa dual nativa y traducciones asociadas. Sincronizado a Tauri y caché PWA v3.2.
+- [x] **DoD de Experiencia de Escritorio Pulida (2026-08-22):**
+  - [x] Diálogos nativos del SO (`rfd` en Rust, `showSaveFilePicker` en Web).
+  - [x] Iconografía de marca generada con `app-icon.svg` y `tauri icon` para todas las plataformas.
+  - [x] Selector segmentado en pastilla ES/EN (`.segmented-switcher` estilo DBV Markdown Reader).
+  - [x] Atajos universales (`⌘S`/`Ctrl+S`, `⌘O`/`Ctrl+O`, `⌘Enter`, `Escape`) y menú nativo en macOS (`tauri::menu::Menu::default()`).
+  - [x] Scrollbars oscuras (`::-webkit-scrollbar`) y ancho fluido al 100% de la ventana.
+  - [x] Incorporada la sección §7 (DoD) en `docs/NATIVE_DESKTOP_APPS.md` y §8 en `docs/WEB_TO_DESKTOP_MIGRATION.md`.
 - [ ] **Preparar publicación en Microsoft Store:** Seguir checklist de `dbv-specs-ops/docs/MARKETPLACE_PUBLISHING.md` (identidad MSIX, formulario de certificación).
 - [ ] **Preparar publicación en Uptodown:** Seguir la parte correspondiente de `dbv-specs-ops/docs/MARKETPLACE_PUBLISHING.md`.
-- [ ] **(Opcional, sin decidir)** Añadir tests — hoy no hay ninguno.
 
 ---
 
 ## 🔄 Context Snapshot / Snapshot de Contexto
 
 > **Last update / Última actualización:** 2026-08-22
-> **Exact point / Punto exacto:** Fases 0-7 del `MIGRATION_PROMPT.md` cerradas y verificadas. Pantalla de setup en su segundo rediseño ("Studio instrument", handoff de Claude Design), también verificado ejecutando la app en ambos temas.
-> **Pending / Pendiente:** Fase 8 a medias — documentación SDD actualizada, falta `README.md` y el tag de release.
-> **Next step / Próximo paso:** Añadir sección de instalación de escritorio al `README.md`, luego `git tag v0.1.0 && git push origin v0.1.0` para que los 3 workflows generen el primer instalador.
+> **Exact point / Punto exacto:** /ship completado para v0.2.0. Documentación y README.md actualizados, DoD de escritorio validado, workflows listos y gestión de claves minisign documentada.
+> **Pending / Pendiente:** Commit final, merge a rama principal / tag `v0.2.0` y publicación de instaladores en GitHub Releases. Posteriormente, publicación en tiendas.
+> **Next step / Próximo paso:** Realizar commit de los cambios, crear tag `v0.2.0` y lanzar workflows de release.

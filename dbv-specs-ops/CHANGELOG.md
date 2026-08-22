@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Sin publicar] / [Unreleased]
+## [0.2.0] — 2026-08-22
 
-### Added (2026-08-22, segunda pasada de diseño)
+### Added (Versión Escritorio Nativa + Rediseño Studio Instrument)
 - **Rediseño "Studio instrument"** de la pantalla de configuración, a partir de un handoff de alta fidelidad generado con Claude Design: header con marca, panel de guion sin caja (misma tipografía que la lectura), inspector lateral fijo con steppers segmentados y lista de atajos, barra de transporte inferior. Sustituye por completo la dirección visual del rediseño anterior — ver `dbv-specs-ops/docs/DESIGN.md`.
 - **Tema oscuro/claro real**, con conmutador persistido en `localStorage` y sin flash de tema incorrecto al cargar (aplicado antes del primer pintado).
 - **Fuentes de marca autoalojadas**: Newsreader (guion y lectura) y Nunito (lecturas numéricas), como `woff2` locales en `fonts/` — nunca CDN, el binario de escritorio debe funcionar sin red.
 - Panel de configuración de teclas convertido de sección siempre visible a **panel deslizante** con velo, cerrable con `Esc`, clic fuera o el botón de cierre.
-- Estadísticas del guion en una sola línea (`N words · m:ss`), con el tiempo estimado recalculado también al cambiar la velocidad de scroll.
+- **Internacionalización (i18n) completa (Español / Inglés)** en modo dual (Web + Escritorio): diccionario nativo en Vanilla JS (<2 KB) sin librerías externas, detección automática por `navigator.language`, selector manual interactivo en el header (`#lang-toggle`), persistencia en `localStorage` (`teleprompterLang`), traducción de toda la UI (`data-i18n*`), pluralización dinámica de palabras y tiempos (`N words · m:ss` / `N palabras · m:ss`), atajos y toasts.
+- **Gestión de archivos y título interactivo del guion:** subtítulo editable con persistencia en `localStorage` (`teleprompterScriptTitle`), botones de Abrir (`.txt`, `.md`) y Guardar/Exportar (`.txt`), y soporte para arrastrar y soltar (drag & drop) archivos directamente sobre el área de texto.
+- **Diálogos de archivo nativos del sistema operativo:** integración con `rfd` (Rust File Dialog) en Tauri y `showSaveFilePicker()` (File System Access API) en la Web para abrir la ventana nativa "Guardar como..." / "Abrir..." en vez de descargas automáticas a ciegas.
+- **Iconografía de marca oficial:** icono personalizado generado con vector maestro `app-icon.svg` y distribuido vía `tauri icon` a todas las plataformas (`.ico`, `.icns`, Microsoft Store / Appx PNGs y PWA).
+- **Selector de idioma segmentado en pastilla:** componente idéntico a DBV Markdown Reader (`[ (ES) | EN ]`) con estados activos resaltados.
+- **Atajos de teclado universales de escritorio:** `⌘S`/`Ctrl+S` para guardar, `⌘O`/`Ctrl+O` para abrir, `⌘Enter`/`Ctrl+Enter` para iniciar teleprompter y `Escape` para salir/cerrar, funcionales incluso mientras se edita texto.
+- **Soporte de menús nativos en macOS:** configuración de `tauri::menu::Menu::default()` para habilitar barra de menús del sistema y atajos estándar (`⌘Q`, `⌘W`, `⌘C`, `⌘V`, `⌘A`) en macOS.
+- **Scrollbars oscuras personalizadas y ancho completo:** eliminación de la barra blanca del sistema, pista transparente, tiradores integrados con el tema activo y eliminación del límite `max-width: 64ch` para aprovechar el 100% de la pantalla.
+- Estadísticas del guion en una sola línea (`N words · m:ss` / `N palabras · m:ss`), con el tiempo estimado recalculado también al cambiar la velocidad de scroll.
 
 ### Added
 - Adopción del framework `dbv-specs-ops` v2.6.0 (Spec-Driven Development) en `dbv-specs-ops/`, con `CLAUDE.md` en la raíz como fichero de activación para Claude Code.

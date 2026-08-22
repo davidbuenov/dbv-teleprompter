@@ -110,15 +110,43 @@ de actualización para esa plataforma hasta que se resuelva la firma cross-máqu
     includeUpdaterJson: false
 ```
 
-## 7. Deuda técnica aceptable: firma cross-máquina no resuelta
+## 7. Claves de Firma Tauri (`minisign`) y Almacenamiento Seguro
 
-Si el par de claves de firma del actualizador se usa hoy solo en la máquina local donde se firma el build
-de una plataforma (p. ej. Windows), fusionar en un único manifiesto de actualización (`latest.json`) una
-firma generada en CI (otra plataforma) con otra generada en local introduce una coordinación cross-máquina
-real. Es preferible **documentarlo explícitamente como deuda técnica consciente** (esa plataforma queda sin
-auto-actualización hasta resolverlo) que improvisar una coordinación frágil bajo presión de tiempo.
+Para firmar los ejecutables de Windows/actualizaciones o permitir la auto-actualización sin romper la seguridad:
 
-## 8. Builds sin firmar como estrategia intermedia legítima
+1. **Ubicación estándar de las claves:**
+   - La clave privada y su contraseña **NUNCA** se guardan en el repositorio Git.
+   - Se almacenan localmente en `C:\Users\<usuario>\.tauri-keys\` (fuera del árbol del proyecto).
+   - Estructura típica:
+     ```
+     C:\Users\<usuario>\.tauri-keys\
+     ├── <app-name>.key        # Clave privada minisign (cifrada con contraseña)
+     ├── <app-name>.key.pub    # Clave pública minisign
+     └── README.txt            # Contraseña generada (mover a gestor de contraseñas)
+     ```
+2. **Generación de un nuevo par de claves (por proyecto):**
+   ```bash
+   npx tauri signer generate -w "C:\Users\<usuario>\.tauri-keys\<app-name>.key"
+   ```
+3. **Incrustación de la clave pública en `tauri.conf.json`:**
+   - El contenido de `<app-name>.key.pub` se copia en `tauri.conf.json` (o en `plugins.updater.pubkey` si se usa el updater oficial).
+4. **Compilación local firmada en Windows (PowerShell):**
+   ```powershell
+   $env:TAURI_SIGNING_PRIVATE_KEY = Get-Content "C:\Users\$env:USERNAME\.tauri-keys\<app-name>.key" -Raw
+   $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "<tu_password_o_desde_gestor>"
+   npx tauri build
+   ```
+   Esto genera el instalador `.exe` / `.msi` y el archivo de firma `.sig` en `src-tauri/target/release/bundle/`.
+
+## 8. Deuda técnica y compilación multiplataforma en GitHub Actions
+
+- **Runners de GitHub Actions:**
+  - `release-linux.yml` (Ubuntu 22.04): Compila `.deb` y `.AppImage`.
+  - `release-macos.yml` (macOS 14+): Compila `.dmg` y `.app.tar.gz` (target universal `aarch64` + `x86_64`).
+  - `release-windows.yml` (Windows Server / `windows-latest`): Compila instaladores NSIS / `.exe` / `.msi`.
+- **Publicación:** En cada tag `v*.*.*`, los workflows se disparan en paralelo y adjuntan automáticamente sus instaladores como borrador de Release en GitHub (`releaseDraft: true`), permitiendo revisarlos antes de hacer clic en "Publish release".
+
+## 9. Builds sin firmar como estrategia intermedia legítima
 
 Publicar un binario sin firma de código ni notarización (coste real: cuenta de desarrollador de pago +
 verificación de identidad recurrente) es una decisión de producto válida cuando ese coste no está

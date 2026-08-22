@@ -1,98 +1,99 @@
-# DBV PWA Teleprompter
+# DBV Teleprompter
 
-![Teleprompter App Screenshot 1](images/teleprompter1.png) 
-![Teleprompter App Screenshot 2](images/teleprompter2.png) 
+![DBV Teleprompter](images/teleprompter1.png)
 
-A lightweight, browser-based Progressive Web App (PWA) teleprompter. Paste your text, control speed and font size, and start reading! Works offline after the first visit and can be "installed" on your device.
+A lightweight, professional teleprompter designed with a **Studio Instrument** interface for video creators, presenters, and streamers. Available both as a modern browser-based Progressive Web App (PWA) and as a standalone native desktop application for Windows, macOS, and Linux.
+
+---
 
 ## ✨ Features
 
-*   **Paste & Go:** Easily paste large amounts of text.
-*   **Adjustable Speed:** Control scrolling speed with on-screen buttons or keyboard shortcuts.
-*   **Adjustable Font Size:** Customize text size for readability.
-*   **Keyboard Controls:**
-    *   Play/Pause: `Spacebar` (configurable)
-    *   Speed Up/Down: `+` / `-` (configurable)
-    *   Font Size Up/Down: `PageUp` / `PageDown` (configurable)
-    *   Nudge Text: `ArrowUp` / `ArrowDown` (configurable)
-    *   Exit Prompter: `Escape` (configurable)
-*   **Configurable Keys:** Customize keyboard shortcuts to your preference (saved in local storage).
-*   **PWA Ready:**
-    *   Installable on desktop and mobile devices.
-    *   Works offline (core app shell).
-*   **Native Desktop App:** Also available as a native binary for Windows, macOS and Linux (built with Tauri v2) — the web version keeps working exactly as before.
-*   **Modern Interface:** Clean and user-friendly setup screen.
-*   **Focus Indicator:** Red triangle to guide your reading during playback.
-*   **Responsive Design:** Adapts to different screen sizes.
+- 🎛️ **Studio Instrument Interface:** Sleek matte-black aesthetic designed for studio environments with fluid layout, custom slim scrollbars, and distraction-free dark/light themes.
+- 🌐 **Full Bilingual Support (i18n):** Instant switching between **Español** and **English** with reactive translations for labels, statistics, toasts, and shortcut keys.
+- 📁 **Native File Management & Interactive Title:**
+  - Open and import `.txt` and `.md` script files with native OS file choosers (`rfd` in desktop, File System Access API in browser).
+  - Save and export scripts with customizable script titles.
+  - Full **Drag & Drop** support to drop text files directly onto the script editor.
+- ⏱️ **Real-Time Word Count & Speech Duration:** Dynamic calculation of word count and estimated reading time based on your selected scroll speed.
+- ⌨️ **Universal Desktop Shortcuts:**
+  - `⌘S` / `Ctrl+S`: Save script to file.
+  - `⌘O` / `Ctrl+O`: Open script file.
+  - `⌘Enter` / `Ctrl+Enter`: Start teleprompter instantly.
+  - `Space`: Pause / Resume scrolling.
+  - `+` / `-`: Increase / Decrease scroll speed.
+  - `PageUp` / `PageDown`: Increase / Decrease font size.
+  - `↑` / `↓`: Nudge text forward / backward.
+  - `Escape`: Exit teleprompter to setup or close key configuration panel.
+- ⚙️ **Configurable Keyboard Shortcuts:** Slide-in settings panel to customize every control key to your personal preference (persisted in local storage).
+- 🎯 **Focus Reading Guide:** Contrast indicator line to keep your eye line aligned during playback.
+- 🔒 **100% Offline & Private:** Zero external CDN dependencies, self-hosted brand fonts (`Newsreader` and `Nunito`), and no telemetry. Your scripts never leave your machine.
 
-## 🚀 Live Demo
+---
 
-[**Try it out here!**](https://davidbuenov.github.io/dbv-teleprompter/) <!-- Optional: Link to GitHub Pages demo -->
+## 🚀 Live Web Demo & PWA
+
+[**Launch Web Teleprompter**](https://davidbuenov.github.io/dbv-teleprompter/)
+
+### Install as a PWA:
+- **Desktop (Chrome / Edge / Brave):** Click the install icon in the address bar.
+- **Mobile (Android):** Tap "Add to Home screen".
+- **Mobile (iOS Safari):** Tap the Share button → "Add to Home Screen".
+
+---
+
+## 🖥️ Desktop Application (Windows, macOS, Linux)
+
+Download pre-compiled native installers directly from the [Releases Page](https://github.com/davidbuenov/dbv-teleprompter/releases):
+
+- **Windows:** `.exe` (NSIS Installer) / `.msi`
+- **macOS:** `.dmg` / `.app.tar.gz` (Universal Apple Silicon + Intel)
+- **Linux:** `.deb` / `.AppImage`
+
+> *Note for macOS / Windows without commercial certificate:* If prompted by SmartScreen or Gatekeeper on first launch, select *"More info" → "Run anyway"* (Windows) or Right Click → *"Open"* (macOS).
+
+---
 
 ## 🛠️ Tech Stack
 
-*   HTML5
-*   CSS3
-*   Vanilla JavaScript
-*   Service Worker for PWA capabilities
-*   [Tauri v2](https://v2.tauri.app/) (Rust) for the native desktop builds
+- **Frontend:** Vanilla HTML5, CSS3 Custom Properties, Vanilla JavaScript (zero bundler, fast IIFE architecture).
+- **Offline / PWA:** Dedicated Service Worker (`sw.js`) and Web App Manifest.
+- **Desktop Core:** [Tauri v2](https://v2.tauri.app/) (Rust) with native menus and `rfd` dialogs.
+- **Spec-Driven Architecture:** `dbv-specs-ops` framework.
 
-## ⚙️ Getting Started
+---
 
-**As a User:**
+## ⚙️ Local Development
 
-1.  Simply open `index.html` in your web browser.
-2.  Or, visit the [live demo link](#-live-demo) above.
-3.  **To install as a PWA:**
-    *   **Desktop (Chrome/Edge):** Look for an install icon in the address bar.
-    *   **Mobile (Android Chrome):** You should be prompted to "Add to Home Screen" after a few interactions.
-    *   **Mobile (iOS Safari):** Tap the "Share" icon, then "Add to Home Screen."
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v20+)
+- [Rust](https://www.rust-lang.org/tools/install) (for desktop builds)
 
-**As a Desktop App (Windows / macOS / Linux):**
+### Quick Start
 
-Download the installer for your platform from the [Releases page](https://github.com/davidbuenov/dbv-teleprompter/releases) and run it. The desktop app is a native binary — it doesn't need a browser and works fully offline.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/davidbuenov/dbv-teleprompter.git
+   cd dbv-teleprompter
+   ```
 
-> The web version at the [live demo](#-live-demo) keeps working exactly as before. The desktop app is an *additional* distribution channel, not a replacement.
+2. **Web Mode:**
+   Open `index.html` in your browser or run a simple local server:
+   ```bash
+   python -m http.server 8080
+   ```
 
-**For Local Development:**
+3. **Desktop Mode (Tauri):**
+   ```bash
+   npm install
+   npm run tauri dev      # Launch desktop app with live reload
+   npm run tauri build    # Compile release installer for your OS
+   ```
 
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/davidbuenov/dbv-teleprompter.git
-    cd dbv-teleprompter
-    ```
-2.  **Web / PWA mode:** open `index.html` in your browser.
-    *   For PWA features like the service worker to function correctly during local development, you might need to serve the files via a local web server (e.g., using the `http-server` npm package or a browser extension like "Live Server" for VS Code). `localhost` is treated as a secure origin.
-3.  **Desktop mode:** requires [Rust](https://www.rust-lang.org/tools/install) and Node.js.
-    ```bash
-    npm install
-    npm run tauri dev      # run the native app
-    npm run tauri build    # produce installers for your platform
-    ```
-    *   The static files stay in the repo root (that's what GitHub Pages publishes). Tauri consumes a generated copy in `src-tauri/frontend/`, refreshed automatically by `scripts/sync-frontend.mjs` before every `dev`/`build`.
-
-## 📜 How to Use
-
-1.  **Paste Text:** Copy your script and paste it into the large text area on the setup screen.
-2.  **Adjust Settings:**
-    *   Use the `+` / `-` buttons or keyboard shortcuts to set the desired **Scroll Speed**.
-    *   Use the `+` / `-` buttons or keyboard shortcuts to set the desired **Font Size**.
-3.  **Configure Keys (Optional):** Click "Configure Keys" to customize the keyboard shortcuts for various actions. Your preferences will be saved in your browser.
-4.  **Start Prompter:** Click the "Start Prompter" button.
-5.  **During Playback:**
-    *   Use your configured keys to play/pause, adjust speed/font, nudge the text, or exit.
-    *   The red triangle on the left indicates the approximate reading line.
-
-## 🙏 Acknowledgements
-
-This project was developed by **[David Bueno Vallejo/davidbuenov]**.
-
-Significant portions of the code, including the core logic for the teleprompter, PWA implementation, user interface design, and iterative improvements, were generated and refined with the assistance of **Google's AI (Gemini 2.5 Pro Preview 05-06)**. This was a collaborative effort where the AI provided code generation, debugging help, and architectural suggestions.
+---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+Developed with ❤️ by **[David Bueno Vallejo](https://davidbuenov.com)** · [GitHub](https://github.com/davidbuenov)
 
-*Made with ❤️ and a little help from AI!*
