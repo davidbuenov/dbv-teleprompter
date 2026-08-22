@@ -2,8 +2,8 @@
 
 > **Fase:** `/spec` (Especificación Visual)
 > **Estado:** Validado
-> **Última Revisión:** 2026-08-22
-> **Aplica a:** Pantalla de configuración (setup). La vista de prompting en marcha queda deliberadamente fuera — ver "Visión General".
+> **Última Revisión:** 2026-08-22 (v2 — sustituye por completo a la versión anterior, ver §Historial)
+> **Aplica a:** Pantalla de configuración (setup). La vista de prompting en marcha hereda solo color y tipografía — ver "Visión General".
 
 ---
 
@@ -17,178 +17,161 @@
 # ────────────────────────────────────────────────
 version: alpha
 name: "DBV Teleprompter"
-description: "Herramienta de estudio: sobria, de alto contraste y sin ruido. La interfaz se aparta para que el guion sea el protagonista."
+description: "Studio instrument — panel de control de estudio: matte black por defecto, guion protagonista al centro, ajustes en un inspector lateral fijo, acción principal en una barra de transporte inferior."
 
 colors:
-  primary:      "#1E40AF"   # Azul profundo de marca
-  secondary:    "#475569"   # Slate — soporte, bordes, estados secundarios
-  accent:       "#2563EB"   # Azul vivo — el único motor de interacción
-  neutral:      "#F8FAFC"   # Fondo base
-  surface:      "#FFFFFF"   # Tarjetas y contenedores
-  on-primary:   "#FFFFFF"
-  on-surface:   "#0F172A"   # Texto principal
-  on-neutral:   "#64748B"   # Texto secundario / mutado
-  error:        "#DC2626"
-  success:      "#059669"
-  warning:      "#D97706"
+  bg:  "#0e0e10"   # Fondo de la app y de la vista de lectura
+  s:   "#17171a"   # Inspector, barra de transporte, paneles
+  s2:  "#212126"   # Fondo de steppers y <kbd>
+  b:   "rgba(255,255,255,.10)"   # Todos los bordes y filetes
+  fg:  "#f3f1ed"   # Guion, títulos, valores
+  fg2: "rgba(243,241,237,.52)"   # Etiquetas y texto secundario
+  a:   "#e05a3f"   # Acción primaria, línea de foco, punto de estado — rojo de equipo de grabación
 
 dark:
-  primary:      "#3B82F6"
-  secondary:    "#94A3B8"
-  accent:       "#60A5FA"
-  neutral:      "#0B1120"   # Gris azulado muy profundo, no negro puro
-  surface:      "#151C2C"
-  on-primary:   "#0B1120"
-  on-surface:   "#E2E8F0"
-  on-neutral:   "#94A3B8"
+  # El tema oscuro ES la paleta por defecto (:root); no hay overrides que listar aquí.
+  # La tabla "Claro" de más abajo son los overrides que sí se aplican, bajo [data-theme="light"].
+
+light:
+  bg:  "#eae8e3"
+  s:   "#fbfaf8"
+  s2:  "#f1efeb"
+  b:   "rgba(0,0,0,.12)"
+  fg:  "#151517"
+  fg2: "rgba(21,21,23,.55)"
+  a:   "#c8402a"
 
 typography:
-  heading:
-    fontFamily: "system-ui"
-    fontSize:   1.75rem
-    fontWeight: 700
-    lineHeight: 1.15
-    letterSpacing: "-0.02em"
-  subheading:
-    fontFamily: "system-ui"
-    fontSize:   0.8125rem
-    fontWeight: 600
-    lineHeight: 1.3
-    letterSpacing: "0.06em"   # Versalitas para títulos de sección
-  body:
-    fontFamily: "system-ui"
-    fontSize:   1rem
-    fontWeight: 400
-    lineHeight: 1.6
-  label:
-    fontFamily: "system-ui"
-    fontSize:   0.9375rem
+  script:
+    fontFamily: "Newsreader, Georgia, serif"
+    fontWeight: 300
+    fontSize: "23px (20px móvil, 22px tablet)"
+    lineHeight: 1.64
+  numericReadout:
+    fontFamily: "Nunito, ui-monospace, monospace"
     fontWeight: 500
-  caption:
-    fontFamily: "system-ui"
-    fontSize:   0.8125rem
-    fontWeight: 400
+    fontSize: "32px (22-26px según breakpoint)"
+    fontVariantNumeric: tabular-nums
+  eyebrow:
+    fontFamily: "ui-monospace, Menlo, monospace"
+    fontWeight: 500
+    fontSize: 10.5px
+    letterSpacing: "0.15em"
+    textTransform: uppercase
+  ui:
+    fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif'
+    fontWeight: "500-600"
+    fontSize: "12-14px"
 
 rounded:
-  none: 0px
-  sm:   6px
-  md:   10px
-  lg:   16px
-  xl:   20px
-  full: 9999px
+  sm: 6px    # <kbd>
+  md: 8px    # botones de header, campos del panel de teclas
+  lg: 11px   # steppers, botones de acción
+  xl: 13px   # steppers en tablet
 
 spacing:
-  xs:  4px
-  sm:  8px
-  md:  16px
-  lg:  24px
-  xl:  40px
-  xxl: 72px
+  xs: 2px
+  sm: 8px
+  md: 12px
+  lg: 16px
+  xl: 22px
+  xxl: 24px
+  xxxl: 30px
 
 components:
-  button-primary:
-    backgroundColor: "{colors.accent}"
-    textColor:       "{colors.on-primary}"
-    rounded:         "{rounded.md}"
-    padding:         "13px 28px"
-  button-secondary:
-    backgroundColor: "transparent"
-    textColor:       "{colors.on-surface}"
-    rounded:         "{rounded.md}"
-    padding:         "13px 22px"
-    border:          "1px solid {colors.secondary}"
-  card:
-    backgroundColor: "{colors.surface}"
-    rounded:         "{rounded.xl}"
-    padding:         "{spacing.xl}"
-  input:
-    backgroundColor: "{colors.neutral}"
-    textColor:       "{colors.on-surface}"
-    rounded:         "{rounded.md}"
-    border:          "1px solid transparent"
-  input-focus:
-    border:          "1px solid {colors.accent}"
-    ring:            "3px rgba(37, 99, 235, 0.15)"
   stepper:
-    description:     "Grupo -/valor/+ como una sola pastilla segmentada, no tres controles sueltos"
-    backgroundColor: "{colors.neutral}"
-    rounded:         "{rounded.md}"
+    description: "Grupo −/valor/+ de 44×44px por botón, radio 11px, fondo s2, lectura numérica Nunito 500 tabular"
+  primary-button:
+    backgroundColor: "{colors.a}"
+    textColor: "#fff"
+    rounded: "{rounded.lg}"
+  ghost-button:
+    backgroundColor: transparent
+    border: "1px solid {colors.b}"
+    textColor: "{colors.fg2}"
+    rounded: "{rounded.md}"
   kbd:
-    description:     "Tecla física: fondo surface, borde 1px, sombra inferior de 1px"
-    rounded:         "{rounded.sm}"
+    backgroundColor: "{colors.s2}"
+    border: "1px solid {colors.b}"
+    rounded: "{rounded.sm}"
+  slide-in-panel:
+    description: "Panel de configuración de teclas: overlay + panel de 360px desde la derecha, transform 220ms"
 ```
 
 ---
 
 ## Visión General
 
-La app tiene **dos pantallas con propósitos opuestas, y el sistema de diseño solo gobierna una**.
+La app tiene **dos pantallas con propósitos opuestos**.
 
-La **vista de prompting** (texto blanco sobre negro, indicador rojo) es funcional y está terminada: su fealdad aparente *es* el diseño correcto — máximo contraste, cero distracción, nada que compita con el guion. **No se toca.**
+La **pantalla de setup** es un instrumento de estudio: tres bandas verticales (header, guion + inspector, barra de transporte), sin scroll de página, matte black por defecto. Idea rectora: **el editor ya ES el prompter** — el textarea usa la misma familia (Newsreader 300), el mismo cuerpo relativo y la misma medida que la vista de lectura, así que lo que se escribe se ve tal como se leerá. Eso elimina la necesidad de "previsualizar".
 
-La **pantalla de setup** es donde vive esta identidad: sobria, con aire, jerarquía clara y densidad baja. El usuario suele estar aquí un minuto antes de grabar, a menudo con prisa y a veces en un estudio a oscuras. Debe encontrar todo de un vistazo y no ser deslumbrado. De ahí el modo oscuro automático y la ausencia total de decoración.
+La **vista de prompting en marcha** conserva su geometría exacta de siempre (posición, triángulo de foco, transform de scroll) — lo único que cambia es que ahora **hereda las custom properties de color** (`--bg`, `--fg`, `--a`) y la familia tipográfica (`--f`, Newsreader) del tema activo, en vez de tener negro/blanco/rojo cableados. Es una decisión deliberada de este rediseño (ver Decisiones de Diseño): con un conmutador de tema real, forzar la vista de lectura a negro puro pase lo que pase dejó de tener sentido — ahora acompaña al tema elegido, oscuro o claro.
 
 ---
 
 ## 🎨 Colores
 
-- **Primary (`#1E40AF`):** azul profundo de marca. Wordmark y elementos de identidad. Nunca en fondos de página completa.
-- **Secondary (`#475569`):** slate. Bordes, separadores y texto de soporte.
-- **Accent (`#2563EB`):** el único motor de interacción — CTA principal, foco de inputs, valores activos de los steppers, enlaces. Reservado para acciones, jamás como decoración.
-- **Neutral (`#F8FAFC`):** base de la página y fondo de campos. Ligeramente frío para que el blanco de la tarjeta destaque como superficie elevada.
-- **Surface (`#FFFFFF`):** la tarjeta que contiene toda la configuración.
-- **Error / Success / Warning:** solo feedback del sistema (p. ej. confirmación al guardar atajos).
+- **`--a` (rojo `#e05a3f` oscuro / `#c8402a` claro):** el único color con carga — rojo de equipo de grabación. Se usa en tres sitios y en ninguno más: botón `Start prompter`, punto de la marca y de estado "Ready", línea de foco de la vista de lectura.
+- **`--bg` / `--s` / `--s2`:** tres niveles de profundidad — fondo de página, panel elevado (inspector, transporte, paneles), y superficie de controles (steppers, `<kbd>`).
+- **`--fg` / `--fg2`:** texto principal (guion, valores, títulos) y texto secundario (etiquetas mono en versalitas, hints). `--fg2` nunca baja de 11px.
+- **`--b`:** un único tono de borde para todo — filetes, bordes de botones, separadores. Siempre 1px, nunca 2px.
 
-### Modo Oscuro
+### Modo Oscuro / Claro
 
-- **Estrategia:** paleta propia, no inversión. Fondos en gris azulado profundo (`#0B1120`) en lugar de negro puro, para evitar halos alrededor del texto y no chocar con el negro absoluto de la vista de prompting. El azul de marca sube en luminosidad (`#3B82F6` / `#60A5FA`) para mantener contraste WCAG AA sobre fondo oscuro.
-- **Activación:** automática vía `prefers-color-scheme`. Sin conmutador manual: es una app que se abre y se usa en un minuto, un ajuste más sería ruido.
+- **Por defecto: oscuro.** `:root` define directamente los tokens oscuros; `[data-theme="light"]` los sobreescribe. Es la dirección inversa de la sesión de diseño anterior (que era clara por defecto) — ver Historial.
+- **Conmutador real**, persistido en `localStorage` (`teleprompterTheme`). Sin él, se usa `prefers-color-scheme`.
+- **Sin flash de tema incorrecto:** un script inline en el `<head>` de `index.html`, antes de cargar `style.css`, lee el valor guardado (o el del sistema) y fija `data-theme` en el `<html>` sincrónicamente, antes del primer pintado.
+- **Sin transición de color** al conmutar: es un cambio de estado, no una animación decorativa.
 
 ---
 
 ## ✍️ Tipografía
 
-- **Fuente principal:** *system font stack* (`Segoe UI Variable` en Windows, `SF Pro` en macOS, `Inter`/`Roboto` en Linux). **Decisión deliberada: se eliminó la dependencia de Google Fonts.** Era el único recurso de red de toda la app y obligaba al binario de escritorio a tener conexión en el primer arranque para renderizar correctamente. Las fuentes de sistema son excelentes, cargan instantáneamente y no producen layout shift. Esto resuelve la pregunta abierta sobre vendorizar la tipografía: no hay nada que vendorizar.
-- **Escala:** progresión modular suave. Headings con tracking negativo (`-0.02em`); títulos de sección en versalitas con tracking positivo (`0.06em`) para separarlos sin necesidad de reglas ni tamaños grandes.
-- **Cifras:** los valores numéricos de los controles usan `font-variant-numeric: tabular-nums` para que no bailen al incrementarse.
-- **No usar:** más de una familia tipográfica. Pesos por debajo de 400.
+- **Guion y vista de lectura:** `Newsreader`, peso 300, **autoalojada** (`fonts/newsreader-300-latin.woff2` + `-latin-ext.woff2`, cubre acentos españoles). No se usa la CDN de Google: el binario de escritorio debe funcionar sin red, decisión que ya existía de una sesión anterior y que este rediseño mantiene y extiende (antes se había eliminado Google Fonts sin más; ahora se reintroduce pero autoalojada).
+- **Lecturas numéricas** (velocidad, tamaño de fuente): `Nunito` peso 500, autoalojada igual que Newsreader. `font-variant-numeric: tabular-nums` para que la cifra no salte de ancho al cambiar.
+- **Interfaz** (botones, "While running"): *system font stack* (`Helvetica Neue`/system-ui) — sin autoalojar, no hace falta.
+- **Etiquetas, `<kbd>`, estadísticas del guion:** pila monoespaciada (`ui-monospace, Menlo, monospace`), versalitas con `letter-spacing: .15em` para las etiquetas de sección ("SCRIPT", "SCROLL SPEED", "WHILE RUNNING").
 
 ---
 
 ## 🧩 Componentes Clave
 
+### Layout de la pantalla de setup
+Tres bandas verticales en `100dvh`, sin scroll de página:
+- **Header (62px):** marca (cuadrado 28×28 + punto `--a`) + título/subtítulo + conmutador de tema + botón `Keys`.
+- **Guion + inspector:** `grid-template-columns: 1fr 318px`. El textarea flota sin caja ni borde (`background:transparent`), medida legible `max-width:64ch`. El inspector (`--s`) agrupa los dos steppers y la lista "While running".
+- **Barra de transporte (78px):** punto + etiqueta de estado ("Ready"), `Configure keys` y `Start prompter` (único botón primario de la pantalla).
+
+### Steppers
+Grupo `−`/valor/`+`: botones de 44×44px (52×52 en tablet), radio 11px, fondo `--s2`. La lectura numérica central usa Nunito tabular. Los antiguos hints de tecla bajo cada stepper desaparecen — los atajos se consolidan en la lista "While running" del inspector, evitando la confusión de que parecieran botones.
+
+### Panel de configuración de teclas
+Ya no es una sección siempre visible: es un **panel deslizante** (360px, desde la derecha, `transform` 220ms) con velo semitransparente. Se abre desde el header o la barra de transporte; se cierra con la `×`, clic en el velo o `Esc`. Misma lista de 8 campos en una sola columna, mismos `saveKeyConfig()`/`loadKeyConfig()`. Los créditos al autor (antes en la pantalla principal) viven ahora al final de este panel.
+
 ### Botones
-- **Primary:** fondo accent, radio md. **Uno solo por pantalla** (`Start Prompter`). Es el grito — solo uno debe gritar.
-- **Secondary:** contorno de 1px sobre transparente. Para acciones importantes pero no primarias (`Configure Keys`).
-- **Stepper (`−` / valor / `+`):** los tres elementos forman **una sola pastilla segmentada**, no tres controles sueltos flotando. Es el cambio de mayor impacto visual frente al diseño anterior.
-
-### Tarjeta
-- Surface, radio xl, sombra difusa y muy suave (`0 1px 3px` + `0 12px 32px` a baja opacidad). Sin borde en claro; borde sutil de 1px en oscuro, donde la sombra no se percibe.
-
-### Teclas (`<kbd>`)
-- Los atajos se representan como teclas físicas, no como texto en negrita. Un borde de 1px y 1px de sombra inferior bastan para leerlas como pulsables sin recargar.
-
-### Formularios
-- Inputs sobre fondo neutral con borde transparente; en focus el borde pasa a accent y aparece un halo de 3px. Nunca fondos coloreados.
+- **Primary:** fondo `--a`, radio 11px. Uno solo por pantalla (`Start prompter`).
+- **Ghost:** borde 1px `--b`, fondo transparente. El resto de acciones.
 
 ---
 
 ## ✨ Movimiento e Interacción
 
-- **Duración base:** `180ms` para micro-interacciones (hover, focus). `260ms` para aparición de paneles (configuración de teclas, toast).
-- **Easing:** `cubic-bezier(0.4, 0, 0.2, 1)`.
-- **Principio:** las animaciones son funcionales. El único movimiento no estrictamente informativo es el ligero desplazamiento del CTA en hover, que confirma que es pulsable.
-- **Reducción de movimiento:** `prefers-reduced-motion` anula todas las transiciones y transformaciones.
+- **Micro-interacciones:** 120ms, `cubic-bezier(0.4,0,0.2,1)`.
+- **Panel de teclas:** 220ms al entrar/salir.
+- **Toast:** 200ms.
+- **Reducción de movimiento:** `prefers-reduced-motion` anula todas las transiciones.
 
 ---
 
 ## 📌 Decisiones de Diseño
 
-- **2026-08-22 — Rediseño de la pantalla de setup.** El diseño original (2025) usaba una paleta *flat* heredada de la época (`#3498db`, `#2c3e50`, `#ecf0f1`) que había envejecido mal, con controles sueltos sin agrupar y jerarquía plana. Se rediseñó por completo manteniendo el HTML compatible con `script.js` (todos los `id` y los `onclick` inline intactos). Se corrigió además el título, que decía solo "Teleprompter" en lugar del nombre real del producto.
-- **2026-08-22 — Eliminada la dependencia de Google Fonts.** Ver sección de Tipografía. Cierra la pregunta abierta nº 7 de `SPECIFICATIONS.md`.
-- **2026-08-22 — `alert()` sustituido por un toast propio** al guardar los atajos. Los diálogos nativos del navegador son ajenos al sistema de diseño y, dentro de un WebView de Tauri, tienen comportamiento irregular entre plataformas (ver `NATIVE_DESKTOP_APPS.md` §6.2). Un toast en HTML se comporta igual en los cuatro entornos.
-- **2026-08-22 — Añadido contador de palabras y duración estimada.** No es decoración: para quien prepara una grabación, saber que su guion dura ~2:40 a 140 palabras/minuto es información de trabajo. Se ubica junto a la etiqueta del campo de texto, donde se lee sin buscarla.
+- **2026-08-22 — Sustitución completa del rediseño anterior por la dirección "Studio instrument".** El usuario trajo un handoff de alta fidelidad generado con Claude Design (`temp/design_handoff_teleprompter_1a/`, tres direcciones exploradas, aprobada la `1a`). Se implementó con fidelidad exacta a los tokens del handoff — colores, tipografías, medidas — y se retiran los tokens de la sesión anterior (azul `#2563EB`, claro por defecto, sans-serif system-ui para el guion). Este documento sustituye íntegramente al anterior; la tabla de tokens de arriba es la única vigente.
+- **2026-08-22 — La vista de prompting en marcha pasa a heredar tema.** Contradice la decisión de la sesión anterior ("no se toca, ni con las variables de color"). El handoff de diseño lo pide explícitamente: heredar `--bg`/`--fg`/`--a`/`--f`, sin tocar estructura ni geometría. Se sigue la instrucción más reciente y explícita.
+- **2026-08-22 — Fuentes autoalojadas en vez de retiradas.** La sesión anterior había eliminado Google Fonts sin sustituto. Este rediseño reintroduce tipografía de marca (Newsreader, Nunito) pero **autoalojada** como `woff2` en `fonts/`, manteniendo la garantía de que el binario de escritorio funciona sin red.
+- **2026-08-22 — Estadísticas del guion en una sola línea, dependientes de la velocidad.** `"<n> words · m:ss"`, con el tiempo estimado recalculado como `palabras / 150 · 60 / velocidad` — cambiar la velocidad de scroll actualiza el tiempo mostrado, no solo escribir texto nuevo.
+- **2026-08-22 — Fuente del guion, por defecto "Untitled script", sin funcionalidad de renombrado.** El handoff la incluye como subtítulo de marca; no se implementa una función real de nombrar guiones (fuera de alcance — "solo capa visual, no se añade funcionalidad nueva").
 
 ---
 
-**Instrucción para la IA:** Lee y respeta los tokens y decisiones definidos en este fichero. Si necesitas crear un componente no definido aquí, extrapola coherentemente desde los tokens existentes y registra la nueva decisión como "Decisión de Diseño" en este mismo archivo con fecha y justificación. **La vista de prompting (`#teleprompter-view`, `#teleprompter-text`, `#focus-indicator`) está fuera del alcance de este sistema y no debe modificarse.**
+**Instrucción para la IA:** Lee y respeta los tokens y decisiones definidos en este fichero. Si necesitas crear un componente no definido aquí, extrapola coherentemente desde los tokens existentes y registra la nueva decisión como "Decisión de Diseño" en este mismo archivo con fecha y justificación. La vista de prompting (`#teleprompter-view`, `#teleprompter-text`, `#focus-indicator`) mantiene su estructura y geometría intactas — solo hereda color y tipografía del tema activo.

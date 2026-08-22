@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Sin publicar] / [Unreleased]
 
+### Added (2026-08-22, segunda pasada de diseño)
+- **Rediseño "Studio instrument"** de la pantalla de configuración, a partir de un handoff de alta fidelidad generado con Claude Design: header con marca, panel de guion sin caja (misma tipografía que la lectura), inspector lateral fijo con steppers segmentados y lista de atajos, barra de transporte inferior. Sustituye por completo la dirección visual del rediseño anterior — ver `dbv-specs-ops/docs/DESIGN.md`.
+- **Tema oscuro/claro real**, con conmutador persistido en `localStorage` y sin flash de tema incorrecto al cargar (aplicado antes del primer pintado).
+- **Fuentes de marca autoalojadas**: Newsreader (guion y lectura) y Nunito (lecturas numéricas), como `woff2` locales en `fonts/` — nunca CDN, el binario de escritorio debe funcionar sin red.
+- Panel de configuración de teclas convertido de sección siempre visible a **panel deslizante** con velo, cerrable con `Esc`, clic fuera o el botón de cierre.
+- Estadísticas del guion en una sola línea (`N words · m:ss`), con el tiempo estimado recalculado también al cambiar la velocidad de scroll.
+
 ### Added
 - Adopción del framework `dbv-specs-ops` v2.6.0 (Spec-Driven Development) en `dbv-specs-ops/`, con `CLAUDE.md` en la raíz como fichero de activación para Claude Code.
 - Base de Tauri v2 para empaquetar la app como escritorio nativo (Windows/macOS/Linux) en modo dual junto a la PWA: `src-tauri/`, workflows de release en `.github/workflows/`, `package.json` mínimo con `@tauri-apps/cli`.

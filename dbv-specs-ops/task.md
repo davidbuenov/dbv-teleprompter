@@ -2,8 +2,8 @@
 
 ## Contexto del Proyecto (Context Snapshot)
 * **Objetivo**: Convertir la PWA `dbv-teleprompter` en app de escritorio nativa con Tauri v2, manteniendo el modo web/PWA (modo dual obligatorio), y adoptar `dbv-specs-ops` como framework de trabajo con Claude Code como IA de soporte.
-* **Estado actual**: Adopción de `dbv-specs-ops` completada (Fase 2.2 de `MIGRATION_PROMPT.md`, hecha fuera de orden — se saltó al empezar la migración y se ha corregido ahora). El antiguo `task.md` de la raíz (bitácora paso a paso de `MIGRATION_PROMPT.md`) se ha fusionado aquí y se ha eliminado; este fichero es ahora la única fuente de verdad del backlog.
-* **Última decisión técnica**: Ver `memory.md` — modo dual innegociable, arquetipo A sin bundler, publicación en tiendas pospuesta a validación funcional real de la app de escritorio.
+* **Estado actual**: Migración a Tauri v2 verificada y funcionando (Fases 0-7 del `MIGRATION_PROMPT.md` cerradas). Pantalla de setup rediseñada dos veces; la vigente es "Studio instrument" (ver `docs/DESIGN.md`).
+* **Última decisión técnica**: Ver `memory.md` — modo dual innegociable, arquetipo A sin bundler, tema oscuro/claro real con fuentes de marca autoalojadas.
 * **Próximo paso**: Actualizar `README.md` con la sección de instalación de escritorio y publicar el primer instalador (`git tag v0.1.0`). Después, checklist de tiendas.
 
 ## Checklist de Tareas
@@ -25,9 +25,9 @@
   - [x] `cargo test` pasa: 2/2 en `tauri_app_lib`, 0 fallos.
   - [x] `git status` no muestra `src-tauri/target/` ni `src-tauri/frontend/` — ambos ignorados correctamente.
 - [ ] **Fase 8 (migración Tauri) — Cierre:** Documentación actualizada (`SPECIFICATIONS.md`, `ARCHITECTURE.md`, `memory.md`, `CHANGELOG.md`) ✅. Pendiente: actualizar `README.md` con instrucciones de instalación de escritorio, y publicar el primer instalador con `git tag v0.1.0 && git push origin v0.1.0`.
-- [ ] **Preparar publicación en Microsoft Store:** Seguir checklist de `dbv-specs-ops/docs/MARKETPLACE_PUBLISHING.md` (identidad MSIX, formulario de certificación). **Bloqueado hasta validar que la app funciona.**
-- [ ] **Preparar publicación en Uptodown:** Seguir la parte correspondiente de `dbv-specs-ops/docs/MARKETPLACE_PUBLISHING.md`. **Bloqueado hasta validar que la app funciona.**
-- [ ] **(Opcional, sin decidir)** Vendorizar la fuente de Google Fonts localmente para que el modo escritorio no dependa de red en el primer arranque.
+- [x] **Rediseño "Studio instrument" de la pantalla de setup (2026-08-22):** A partir de un handoff de alta fidelidad de Claude Design. Ver `dbv-specs-ops/docs/DESIGN.md`. Incluye tema oscuro/claro persistido, fuentes Newsreader/Nunito autoalojadas en `fonts/` (cierra definitivamente la pregunta de Google Fonts — vendorizadas, no CDN, no eliminadas), panel de teclas convertido a overlay deslizante, estadísticas del guion dependientes de la velocidad. Verificado ejecutando la app: ambos temas, panel de teclas, steppers, vista de prompting heredando color/tipografía. `cargo test` 2/2. Modo web con los 9 recursos (incluidas las 4 fuentes) sirviendo 200.
+- [ ] **Preparar publicación en Microsoft Store:** Seguir checklist de `dbv-specs-ops/docs/MARKETPLACE_PUBLISHING.md` (identidad MSIX, formulario de certificación).
+- [ ] **Preparar publicación en Uptodown:** Seguir la parte correspondiente de `dbv-specs-ops/docs/MARKETPLACE_PUBLISHING.md`.
 - [ ] **(Opcional, sin decidir)** Añadir tests — hoy no hay ninguno.
 
 ---
@@ -35,6 +35,6 @@
 ## 🔄 Context Snapshot / Snapshot de Contexto
 
 > **Last update / Última actualización:** 2026-08-22
-> **Exact point / Punto exacto:** Fases 0-7 del `MIGRATION_PROMPT.md` cerradas. **La app de escritorio funciona y está verificada ejecutándola de verdad** (UI, controles, scroll, atajos, `localStorage`), con el modo web/PWA intacto. Se resolvió el bug que la tenía inservible: `frontendDist` apuntaba a la raíz del repo y arrastraba `src-tauri/target/` al árbol de assets — ahora hay un paso de sincronización a `src-tauri/frontend/`.
+> **Exact point / Punto exacto:** Fases 0-7 del `MIGRATION_PROMPT.md` cerradas y verificadas. Pantalla de setup en su segundo rediseño ("Studio instrument", handoff de Claude Design), también verificado ejecutando la app en ambos temas.
 > **Pending / Pendiente:** Fase 8 a medias — documentación SDD actualizada, falta `README.md` y el tag de release.
 > **Next step / Próximo paso:** Añadir sección de instalación de escritorio al `README.md`, luego `git tag v0.1.0 && git push origin v0.1.0` para que los 3 workflows generen el primer instalador.

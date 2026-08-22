@@ -23,7 +23,7 @@ const outDir = join(repoRoot, "src-tauri", "frontend");
 
 // Todo lo que la app necesita para funcionar. `sw.js` y `manifest.json` se copian también: son
 // inertes bajo el protocolo de Tauri, pero mantienen los dos modos partiendo de ficheros idénticos.
-const assets = ["index.html", "style.css", "script.js", "manifest.json", "sw.js", "icons"];
+const assets = ["index.html", "style.css", "script.js", "manifest.json", "sw.js", "icons", "fonts"];
 
 await rm(outDir, { recursive: true, force: true });
 await mkdir(outDir, { recursive: true });

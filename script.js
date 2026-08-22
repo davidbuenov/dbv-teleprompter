@@ -17,18 +17,15 @@ const setupContainer = document.getElementById('setup-container');
 const speedDisplay = document.getElementById('speed-display');
 const fontSizeDisplay = document.getElementById('fontsize-display');
 const keyConfigContainer = document.getElementById('key-config-container');
-const showKeyConfigButton = document.getElementById('show-key-config');
-
-// Script stats
+const keyConfigOverlay = document.getElementById('key-config-overlay');
 const scriptStats = document.getElementById('script-stats');
-const wordCountDisplay = document.getElementById('word-count');
-const readTimeDisplay = document.getElementById('read-time');
+const themeToggleButton = document.getElementById('theme-toggle');
 
 // Toast
 const toastElement = document.getElementById('toast');
 let toastTimeoutId;
 
-// Key display elements in footer
+// Key display elements in the "While running" reference list
 const dispPlayPause = document.getElementById('disp-playpause');
 const dispSpeedUp = document.getElementById('disp-speedup');
 const dispSpeedDown = document.getElementById('disp-speeddown');
@@ -38,12 +35,6 @@ const dispNudgeFwd = document.getElementById('disp-nudgeforward');
 const dispNudgeBack = document.getElementById('disp-nudgebackward');
 const dispExit = document.getElementById('disp-exit');
 
-// Key hints shown next to the speed / font steppers
-const hintSpeedUp = document.getElementById('hint-speedup');
-const hintSpeedDown = document.getElementById('hint-speeddown');
-const hintFontUp = document.getElementById('hint-fontup');
-const hintFontDown = document.getElementById('hint-fontdown');
-
 
 // State Variables
 let currentSpeed = 1.0; // Pixels per frame
@@ -52,7 +43,7 @@ let isRunning = false;
 let animationFrameId;
 let currentScrollY = 0;
 const nudgeAmount = 50; // pixels to nudge by
-const wordsPerMinute = 140; // average speaking pace, used for the duration estimate
+const wordsPerMinute = 150; // average speaking pace, used for the duration estimate
 
 // Shows a short message at the bottom of the screen. Replaces alert(): native dialogs look foreign
 // inside the app and behave inconsistently across Tauri's WebViews on each platform.
@@ -64,27 +55,48 @@ function showToast(message) {
     toastTimeoutId = setTimeout(() => toastElement.classList.remove('is-visible'), 2400);
 }
 
-// Word count + estimated spoken duration. Useful when preparing a recording: knowing a script runs
-// ~2:40 is working information, not decoration.
+// Word count + estimated spoken duration, at the current scroll speed. Useful when preparing a
+// recording: knowing a script runs ~2:40 at this pace is working information, not decoration.
 function updateScriptStats() {
-    if (!wordCountDisplay || !readTimeDisplay) return;
+    if (!scriptStats) return;
 
     const words = textInput.value.trim().split(/\s+/).filter(Boolean).length;
-    wordCountDisplay.textContent = words === 1 ? '1 word' : `${words} words`;
-
-    const totalSeconds = Math.round((words / wordsPerMinute) * 60);
+    const totalSeconds = Math.round((words / wordsPerMinute) * 60 / currentSpeed);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    readTimeDisplay.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
 
-    scriptStats.classList.toggle('is-active', words > 0);
+    scriptStats.textContent = `${words} word${words === 1 ? '' : 's'} · ${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
+// ─────────────────────────────────────────────
+// Theme — persisted in localStorage, initial value already applied by the inline
+// script in index.html's <head> (before first paint, to avoid a flash of the wrong theme).
+// ─────────────────────────────────────────────
+function currentTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+}
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+        localStorage.setItem('teleprompterTheme', theme);
+    } catch (e) { /* localStorage unavailable — theme still applies for this session */ }
+
+    if (themeToggleButton) {
+        // The button always offers the *other* theme, so it reads "Light" while dark is active.
+        themeToggleButton.textContent = theme === 'dark' ? 'Light' : 'Dark';
+    }
+}
+
+function toggleTheme() {
+    applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
 }
 
 // Key Configuration
 let keyConfig = {};
 const defaultKeyConfig = {
     playPause: ' ', // Spacebar
-    speedUp: '=', 
+    speedUp: '=',
     speedDown: '-',
     fontUp: 'PageUp',
     fontDown: 'PageDown',
@@ -93,42 +105,15 @@ const defaultKeyConfig = {
     exit: 'Escape'
 };
 
-// Compact key names for the hints next to the steppers, where horizontal space is tight and a long
-// name ("PageDown") would push its stepper out of line with the other one. The reference table below
-// has room, so it keeps the full names.
-const shortKeyLabels = {
-    ' ': 'Space',
-    'PageUp': 'PgUp',
-    'PageDown': 'PgDn',
-    'ArrowUp': '↑',
-    'ArrowDown': '↓',
-    'ArrowLeft': '←',
-    'ArrowRight': '→',
-    'Escape': 'Esc',
-    '=': '+'
-};
-
-function shortKeyLabel(key) {
-    return shortKeyLabels[key] || key;
-}
-
 function updateKeyDisplayFooter() {
-    const speedUpLabel = keyConfig.speedUp === '=' ? '+' : keyConfig.speedUp;
-
     dispPlayPause.textContent = keyConfig.playPause === ' ' ? 'Space' : keyConfig.playPause;
-    dispSpeedUp.textContent = speedUpLabel;
+    dispSpeedUp.textContent = keyConfig.speedUp === '=' ? '+' : keyConfig.speedUp;
     dispSpeedDown.textContent = keyConfig.speedDown;
     dispFontUp.textContent = keyConfig.fontUp;
     dispFontDown.textContent = keyConfig.fontDown;
     dispNudgeFwd.textContent = keyConfig.nudgeForward;
     dispNudgeBack.textContent = keyConfig.nudgeBackward;
     dispExit.textContent = keyConfig.exit;
-
-    // Keep the hints next to each stepper in sync with the configured keys
-    hintSpeedUp.textContent = shortKeyLabel(keyConfig.speedUp);
-    hintSpeedDown.textContent = shortKeyLabel(keyConfig.speedDown);
-    hintFontUp.textContent = shortKeyLabel(keyConfig.fontUp);
-    hintFontDown.textContent = shortKeyLabel(keyConfig.fontDown);
 }
 
 function loadKeyConfig(forceDefaults = false) {
@@ -197,20 +182,21 @@ function setupKeyConfigListeners() {
     });
 }
 
+// Slide-in panel, opened from the header or the transport bar. Same logic as the section it
+// replaces (an open/closed toggle) — only the container changed, from style.display to a class
+// that drives the CSS transform, so it can animate in and out.
 function toggleKeyConfig() {
-    if (keyConfigContainer.style.display === 'none') {
-        keyConfigContainer.style.display = 'block';
-        showKeyConfigButton.textContent = 'Hide Key Config';
-    } else {
-        keyConfigContainer.style.display = 'none';
-        showKeyConfigButton.textContent = 'Configure Keys';
-    }
+    const willOpen = !keyConfigContainer.classList.contains('is-open');
+    keyConfigContainer.classList.toggle('is-open', willOpen);
+    keyConfigOverlay.classList.toggle('is-open', willOpen);
+    keyConfigContainer.setAttribute('aria-hidden', String(!willOpen));
 }
 
 
 // Control Functions
 function updateSpeedDisplay() {
-    speedDisplay.textContent = currentSpeed.toFixed(1);
+    speedDisplay.textContent = currentSpeed.toFixed(1) + '×';
+    updateScriptStats(); // duration estimate depends on speed too
 }
 
 function changeSpeed(amount) {
@@ -259,11 +245,11 @@ function startPrompter() {
     }
     teleprompterText.innerHTML = text.replace(/\n/g, '<br>'); // Ensure line breaks are rendered
     teleprompterText.style.fontSize = currentFontSize + 'px';
-    
-    currentScrollY = 0; 
+
+    currentScrollY = 0;
     teleprompterText.style.transform = `translateY(0px)`;
 
-    document.querySelector('.setup-wrapper').style.display = 'none'; // Hide the whole setup wrapper
+    setupContainer.style.display = 'none';
     teleprompterView.style.display = 'block';
     isRunning = true;
     scrollLoop();
@@ -284,13 +270,13 @@ function togglePlayPause() {
     }
 }
 
-function nudgeScroll(direction) { 
+function nudgeScroll(direction) {
     if (teleprompterView.style.display !== 'block') return;
-    
+
     const wasRunning = isRunning;
     if (wasRunning) stopPrompter();
 
-    currentScrollY -= direction * nudgeAmount; 
+    currentScrollY -= direction * nudgeAmount;
     if (currentScrollY < 0) currentScrollY = 0;
 
     const textHeight = teleprompterText.scrollHeight;
@@ -299,7 +285,7 @@ function nudgeScroll(direction) {
         currentScrollY = textHeight + viewHeight * 0.2;
     }
     teleprompterText.style.transform = `translateY(-${currentScrollY}px)`;
-    
+
     if (wasRunning) {
          isRunning = true;
          scrollLoop();
@@ -309,16 +295,27 @@ function nudgeScroll(direction) {
 function exitPrompter() {
     stopPrompter();
     teleprompterView.style.display = 'none';
-    document.querySelector('.setup-wrapper').style.display = 'flex'; // Show setup wrapper
+    setupContainer.style.display = 'flex';
 }
 
 // Event Listeners
 startButton.addEventListener('click', startPrompter);
+if (themeToggleButton) themeToggleButton.addEventListener('click', toggleTheme);
 
 document.addEventListener('keydown', (event) => {
     if (document.activeElement && document.activeElement.closest('#key-config-container input[type="text"]')) {
-        return; // Ignore if configuring keys
+        return; // Ignore if configuring keys — that input's own listener captures the next keypress
     }
+
+    // While the key configuration panel is open, only Escape (to close it) is handled here.
+    if (keyConfigContainer.classList.contains('is-open')) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            toggleKeyConfig();
+        }
+        return;
+    }
+
     // Make sure keyConfig is loaded
     if (Object.keys(keyConfig).length === 0) loadKeyConfig();
 
@@ -332,7 +329,7 @@ document.addEventListener('keydown', (event) => {
         else if (event.key === keyConfig.nudgeForward) { event.preventDefault(); nudgeScroll(-1); }
         else if (event.key === keyConfig.nudgeBackward) { event.preventDefault(); nudgeScroll(1); }
         else if (event.key === keyConfig.exit) { event.preventDefault(); exitPrompter(); }
-    } else if (document.getElementById('setup-container').style.display !== 'none') { // Setup screen is active
+    } else if (setupContainer.style.display !== 'none') { // Setup screen is active
         // Allow +/- for speed/font on setup screen IF NOT typing in textarea
         if (document.activeElement.tagName.toLowerCase() !== 'textarea') {
              if (event.key === keyConfig.speedUp || (keyConfig.speedUp === '=' && event.key === '+')) {
@@ -354,6 +351,7 @@ document.addEventListener('keydown', (event) => {
 
 // Initial Load
 document.addEventListener('DOMContentLoaded', () => {
+    applyTheme(currentTheme()); // sync the toggle button label with the theme set in <head>
     loadKeyConfig();
     setupKeyConfigListeners();
     updateSpeedDisplay();
