@@ -90,6 +90,10 @@ Teleprompter profesional para Windows: ligero, fluido y 100% privado. Diseñado 
 
 © 2026 David Bueno Vallejo
 
+### URL de directiva de privacidad (Privacy Policy URL)
+
+https://davidbuenov.github.io/dbv-teleprompter/privacidad.html
+
 ### Términos de licencia adicionales
 
 *(dejar en blanco — se usan los términos estándar de la Store, la app en sí es MIT)*

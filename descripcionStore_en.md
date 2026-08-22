@@ -90,6 +90,10 @@ Professional teleprompter for Windows: fast, lightweight, and 100% private. Craf
 
 © 2026 David Bueno Vallejo
 
+### Privacy Policy URL
+
+https://davidbuenov.github.io/dbv-teleprompter/privacy.html
+
 ### Additional license terms
 
 *(leave blank — standard Store terms apply; app is MIT licensed)*

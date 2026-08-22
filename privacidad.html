@@ -1,0 +1,289 @@
+<!--
+  DBV Teleprompter — Política de Privacidad (GitHub Pages / Microsoft Store)
+  Copyright (c) 2026 David Bueno Vallejo
+  Licensed under the MIT License. See LICENSE for details.
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidad — DBV Teleprompter</title>
+  <meta name="description" content="Política de privacidad de DBV Teleprompter: la aplicación no recolecta datos personales ni telemetría. Todo el procesamiento y almacenamiento de guiones ocurre 100% en local." />
+  <link rel="icon" type="image/svg+xml" href="app-icon.svg" />
+  <style>
+    :root {
+      --bg-main: #0c0d0e;
+      --bg-card: #151719;
+      --bg-hover: #1c1f23;
+      --border: #262a30;
+      --accent: #e2553b;
+      --text-primary: #f0f2f5;
+      --text-secondary: #9ba3af;
+      --text-muted: #626b77;
+      --font-ui: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      line-height: 1.7;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(12, 13, 14, 0.85);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.01em;
+    }
+
+    .nav-brand span.dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(226, 85, 59, 0.6);
+      display: inline-block;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
+
+    .lang-btn {
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 13px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .lang-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent);
+    }
+
+    main {
+      flex: 1;
+      padding: 48px 24px 80px;
+    }
+
+    .legal {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .legal h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .legal .legal-updated {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .legal-summary {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 24px 0 36px;
+    }
+
+    .legal-summary p {
+      color: var(--text-primary);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .legal h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 36px 0 12px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legal h2::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .legal p, .legal li {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .legal ul {
+      padding-left: 24px;
+      margin: 12px 0 20px;
+    }
+
+    .legal li {
+      margin-bottom: 8px;
+    }
+
+    .legal strong {
+      color: var(--text-primary);
+    }
+
+    .legal a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .legal a:hover {
+      text-decoration: underline;
+    }
+
+    .legal code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background-color: var(--bg-hover);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--bg-main);
+      padding: 28px 24px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">
+        <span class="dot"></span> DBV Teleprompter
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">← Volver a la App</a>
+        <a href="privacy.html" class="lang-btn">English</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <article class="legal">
+      <h1>Política de Privacidad</h1>
+      <p class="legal-updated">Última actualización: 22 de agosto de 2026</p>
+
+      <div class="legal-summary">
+        <p><strong>Resumen fundamental:</strong> DBV Teleprompter es una aplicación diseñada bajo el principio de privacidad total desde el diseño. <strong>No recolecta, no transmite ni almacena en servidores externos ningún dato personal ni el contenido de tus guiones.</strong> No tiene cuentas de usuario, no contiene publicidad ni analítica, y no envía telemetría de ningún tipo. Todo el procesamiento se realiza 100% en local en tu propio dispositivo.</p>
+      </div>
+
+      <h2>1. Procesamiento local de guiones y textos</h2>
+      <p>Todos los documentos y textos que abres, editas o reproduces en <strong>DBV Teleprompter</strong> (archivos <code>.txt</code>, <code>.md</code> o texto pegado directamente) son procesados exclusivamente en la memoria de tu equipo.</p>
+      <p>La aplicación no cuenta con servidores remotos ni bases de datos en la nube. Tus guiones, notas y proyectos nunca salen de tu ordenador ni son transmitidos por internet.</p>
+
+      <h2>2. Datos almacenados en tu dispositivo</h2>
+      <p>Para ofrecer una experiencia fluida al cerrar y volver a abrir la aplicación, DBV Teleprompter almacena de forma estrictamente local en tu navegador o entorno de escritorio (<code>localStorage</code>) los siguientes datos de configuración:</p>
+      <ul>
+        <li><strong>Borrador de trabajo:</strong> El último texto y título del guion activo para que no pierdas tu trabajo si cierras la ventana involuntariamente.</li>
+        <li><strong>Preferencias de reproducción:</strong> La velocidad de desplazamiento seleccionada y el tamaño de la tipografía de lectura.</li>
+        <li><strong>Ajustes de interfaz:</strong> El tema visual elegido (Modo Oscuro o Modo Claro) y el idioma de la interfaz (Español o Inglés).</li>
+        <li><strong>Atajos de teclado:</strong> Las teclas personalizadas asignadas a cada función en el panel de configuración.</li>
+      </ul>
+      <p>Estos datos residen únicamente en el almacenamiento local de tu equipo y puedes eliminarlos en cualquier momento borrando el almacenamiento local del navegador o desinstalando la aplicación.</p>
+
+      <h2>3. Conexiones de red y funcionamiento offline</h2>
+      <p>DBV Teleprompter está construido con una arquitectura <strong>100% offline-first</strong>:</p>
+      <ul>
+        <li><strong>Sin dependencias de CDN externas:</strong> Todas las tipografías (Newsreader y Nunito), iconos y scripts están autoalojados e incluidos dentro de la aplicación.</li>
+        <li><strong>Sin telemetría ni rastreo:</strong> La aplicación no realiza peticiones periódicas de sondeo, diagnóstico ni estadísticas de uso a ningún servidor.</li>
+      </ul>
+
+      <h2>4. Distribución desde Microsoft Store</h2>
+      <p>Si has instalado DBV Teleprompter desde la <strong>Microsoft Store</strong>, la plataforma de Microsoft puede recopilar datos anónimos de telemetría de descarga, instalación y fallos del sistema operativo según sus propios términos. Para más detalles sobre cómo Microsoft gestiona estos datos, puedes consultar la <a href="https://privacy.microsoft.com/es-es/privacystatement" target="_blank" rel="noopener">Declaración de Privacidad de Microsoft</a>.</p>
+
+      <h2>5. Código abierto y transparencia</h2>
+      <p>DBV Teleprompter es software libre y de código abierto publicado bajo licencia MIT. El código fuente completo está disponible públicamente para su auditoría y revisión en <a href="https://github.com/davidbuenov/dbv-teleprompter" target="_blank" rel="noopener">github.com/davidbuenov/dbv-teleprompter</a>.</p>
+
+      <h2>6. Contacto</h2>
+      <p>Si tienes cualquier duda, sugerencia o consulta sobre esta política de privacidad, puedes contactar con el autor abriendo un issue en <a href="https://github.com/davidbuenov/dbv-teleprompter/issues" target="_blank" rel="noopener">GitHub Issues</a> o a través de la web oficial <a href="https://davidbuenov.com" target="_blank" rel="noopener">davidbuenov.com</a>.</p>
+    </article>
+  </main>
+
+  <footer>
+    <p>DBV Teleprompter · Software Libre bajo Licencia MIT · © 2026 <a href="https://davidbuenov.com" target="_blank" rel="noopener">David Bueno Vallejo</a></p>
+  </footer>
+
+</body>
+</html>

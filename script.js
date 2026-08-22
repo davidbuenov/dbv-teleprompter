@@ -76,7 +76,7 @@ const translations = {
             exit: 'Exit prompter',
             save: 'Save config',
             reset: 'Reset defaults',
-            credits: 'Built by <a href="https://davidbuenov.com" target="_blank" rel="noopener noreferrer">David Bueno Vallejo</a> · <a href="https://github.com/davidbuenov/dbv-teleprompter" target="_blank" rel="noopener noreferrer">Source on GitHub</a>',
+            credits: 'Built by <a href="https://davidbuenov.com" target="_blank" rel="noopener noreferrer">David Bueno Vallejo</a> · <a href="https://github.com/davidbuenov/dbv-teleprompter" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="privacy.html">Privacy</a>',
             pressKey: 'Press a key...',
             savedToast: 'Key configuration saved',
             pasteFirstToast: 'Paste your script first'
@@ -149,7 +149,7 @@ const translations = {
             exit: 'Salir del teleprompter',
             save: 'Guardar configuración',
             reset: 'Restablecer por defecto',
-            credits: 'Creado por <a href="https://davidbuenov.com" target="_blank" rel="noopener noreferrer">David Bueno Vallejo</a> · <a href="https://github.com/davidbuenov/dbv-teleprompter" target="_blank" rel="noopener noreferrer">Código en GitHub</a>',
+            credits: 'Creado por <a href="https://davidbuenov.com" target="_blank" rel="noopener noreferrer">David Bueno Vallejo</a> · <a href="https://github.com/davidbuenov/dbv-teleprompter" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="privacidad.html">Privacidad</a>',
             pressKey: 'Presiona una tecla...',
             savedToast: 'Configuración de teclas guardada',
             pasteFirstToast: 'Pega tu guion primero'
