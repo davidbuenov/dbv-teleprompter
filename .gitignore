@@ -1,0 +1,24 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependencias
+node_modules/
+
+# Rust / Tauri (src-tauri/ tiene su propio .gitignore para /target y /gen/schemas)
+
+# Logs
+*.log
+
+# Temporales e IA Artifacts
+*.tmp
+*.bak
+dbv-specs-ops/implementation_plan.md
+dbv-specs-ops/walkthrough.md
