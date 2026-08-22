@@ -1,5 +1,0 @@
-src-tauri/
-node_modules/
-.git/
-.github/
-dbv-specs-ops/

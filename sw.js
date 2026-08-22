@@ -1,13 +1,15 @@
 /*
- * DBV PWA Teleprompter
- * Copyright (c) 2025 David Bueno Vallejo
- * Desarrollado por David Bueno Vallejo con la asistencia de la IA de Google.
+ * DBV Teleprompter — Service Worker (solo modo web/PWA)
+ * Copyright (c) 2025-2026 David Bueno Vallejo · https://davidbuenov.com
  *
  * Este software se distribuye bajo la Licencia MIT.
  * Consulta el archivo LICENSE para más detalles:
- * https://github.com/davidbuenov/DBVTeleprompter/blob/main/LICENSE
+ * https://github.com/davidbuenov/dbv-teleprompter/blob/main/LICENSE
+ *
+ * La app de escritorio NO registra este worker: los assets ya viajan dentro del binario.
+ * Ver el final de script.js.
  */
-const CACHE_NAME = 'teleprompter-cache-v1.2'; // Increment version if you change cached files
+const CACHE_NAME = 'teleprompter-cache-v2.0'; // Increment version if you change cached files
 const urlsToCache = [
   '.', // Alias for index.html
   'index.html',
@@ -16,7 +18,6 @@ const urlsToCache = [
   'manifest.json',
   'icons/icon-192x192.png',
   'icons/icon-512x512.png'
-  // Add other essential assets if any (e.g., fonts if locally hosted)
 ];
 
 // Install event: open cache and add core files

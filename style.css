@@ -1,14 +1,66 @@
 /*
- * DBV PWA Teleprompter
- * Copyright (c) 2025 David Bueno Vallejo
- * Desarrollado por David Bueno Vallejo con la asistencia de la IA de Google.
+ * DBV Teleprompter — PWA + app de escritorio para leer texto en scroll
+ * Copyright (c) 2025-2026 David Bueno Vallejo · https://davidbuenov.com
  *
  * Este software se distribuye bajo la Licencia MIT.
  * Consulta el archivo LICENSE para más detalles:
- * https://github.com/davidbuenov/DBVTeleprompter/blob/main/LICENSE
+ * https://github.com/davidbuenov/dbv-teleprompter/blob/main/LICENSE
+ *
+ * Tokens y decisiones de diseño: dbv-specs-ops/docs/DESIGN.md
  */
 
-/* Global Resets and Base Styles */
+/* ─────────────────────────────────────────────
+   Design tokens
+   ───────────────────────────────────────────── */
+:root {
+    --primary: #1E40AF;
+    --secondary: #475569;
+    --accent: #2563EB;
+    --accent-soft: rgba(37, 99, 235, 0.1);
+    --neutral: #F8FAFC;
+    --surface: #FFFFFF;
+    --on-primary: #FFFFFF;
+    --on-surface: #0F172A;
+    --on-neutral: #64748B;
+    --border: #E2E8F0;
+    --error: #DC2626;
+    --success: #059669;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+
+    --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 12px 32px rgba(15, 23, 42, 0.07);
+    --shadow-key: inset 0 -1px 0 var(--border);
+
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+    --font: system-ui, -apple-system, "Segoe UI Variable Text", "Segoe UI",
+            Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary: #3B82F6;
+        --secondary: #94A3B8;
+        --accent: #60A5FA;
+        --accent-soft: rgba(96, 165, 250, 0.14);
+        --neutral: #0B1120;
+        --surface: #151C2C;
+        --on-primary: #0B1120;
+        --on-surface: #E2E8F0;
+        --on-neutral: #94A3B8;
+        --border: #263349;
+
+        --shadow-card: 0 0 0 1px var(--border);
+        --shadow-key: inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* ─────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -18,15 +70,16 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f4f7f6; /* Light grayish blue background */
-    color: #333;
+    font-family: var(--font);
+    background-color: var(--neutral);
+    color: var(--on-surface);
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align to top for longer content */
+    align-items: flex-start;
     min-height: 100vh;
-    padding: 20px; /* Add padding for smaller screens */
+    padding: 40px 20px;
 }
 
 .setup-wrapper {
@@ -37,287 +90,506 @@ body {
 
 .container {
     width: 100%;
-    max-width: 700px;
-    background-color: #ffffff;
-    padding: 30px 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
+    max-width: 720px;
+    background-color: var(--surface);
+    padding: 40px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
 }
 
-header {
-    text-align: center;
-    margin-bottom: 30px;
+/* ─────────────────────────────────────────────
+   Header / brand
+   ───────────────────────────────────────────── */
+.app-header {
+    margin-bottom: 36px;
 }
 
-header h1 {
-    font-size: 2.5em;
-    color: #2c3e50; /* Darker blue */
-    margin-bottom: 5px;
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.brand-mark {
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    color: var(--primary);
+}
+
+.brand-mark svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.brand-text h1 {
+    font-size: 1.75rem;
     font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--on-surface);
 }
 
-header p {
-    font-size: 1.1em;
-    color: #7f8c8d; /* Muted gray */
+.tagline {
+    font-size: 0.9375rem;
+    color: var(--on-neutral);
+    margin-top: 2px;
 }
 
-/* Sections Styling */
-section {
-    margin-bottom: 30px;
-}
-
+/* ─────────────────────────────────────────────
+   Section titles
+   ───────────────────────────────────────────── */
 h2 {
-    font-size: 1.6em;
-    color: #34495e; /* Slightly lighter dark blue */
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ecf0f1; /* Light gray border */
-    font-weight: 500;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--on-neutral);
+    margin-bottom: 16px;
 }
 
-/* Script Input */
+section {
+    margin-bottom: 32px;
+}
+
+/* ─────────────────────────────────────────────
+   Script input
+   ───────────────────────────────────────────── */
+.field-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+.field-header label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--on-neutral);
+}
+
+.script-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8125rem;
+    color: var(--on-neutral);
+    font-variant-numeric: tabular-nums;
+}
+
+.script-stats.is-active {
+    color: var(--accent);
+}
+
+.stat-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color: currentColor;
+    opacity: 0.5;
+}
+
 .script-input-section textarea {
     width: 100%;
-    height: 200px;
-    padding: 15px;
-    border: 1px solid #bdc3c7; /* Light gray border */
-    border-radius: 8px;
-    font-size: 1em;
-    color: #333;
-    background-color: #fdfdfd;
+    height: 190px;
+    padding: 16px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-family: var(--font);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--on-surface);
+    background-color: var(--neutral);
     resize: vertical;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: border-color 180ms var(--ease), box-shadow 180ms var(--ease);
+}
+
+.script-input-section textarea::placeholder {
+    color: var(--on-neutral);
+    opacity: 0.7;
 }
 
 .script-input-section textarea:focus {
-    border-color: #3498db; /* Blue border on focus */
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
     outline: none;
 }
 
-/* Controls Section */
+/* ─────────────────────────────────────────────
+   Controls — segmented stepper
+   ───────────────────────────────────────────── */
 .control-group {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding: 10px 0;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
 }
 
-.control-group label {
-    font-size: 1.05em;
-    color: #555;
-    margin-right: 15px;
-    flex-basis: 150px; /* Give labels a consistent width */
+.control-group:last-child {
+    border-bottom: none;
+}
+
+.control-label {
+    flex: 1;
+    min-width: 0;
+}
+
+.control-label label {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--on-surface);
+}
+
+.control-label small {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--on-neutral);
 }
 
 .control-buttons {
     display: flex;
     align-items: center;
+    background-color: var(--neutral);
+    border-radius: var(--radius-md);
+    padding: 3px;
+    flex-shrink: 0;
 }
 
 .control-btn {
-    background-color: #e9ecef; /* Light gray for +/- buttons */
-    color: #495057;
-    border: 1px solid #ced4da;
-    padding: 8px 12px;
-    font-size: 1em;
-    font-weight: bold;
+    background-color: transparent;
+    color: var(--on-neutral);
+    border: none;
+    width: 34px;
+    height: 32px;
+    font-family: var(--font);
+    font-size: 1.0625rem;
+    font-weight: 500;
+    line-height: 1;
     cursor: pointer;
-    border-radius: 6px;
-    margin: 0 5px;
-    min-width: 40px;
-    text-align: center;
-    transition: background-color 0.2s, border-color 0.2s;
+    border-radius: var(--radius-sm);
+    transition: background-color 180ms var(--ease), color 180ms var(--ease);
 }
 
 .control-btn:hover {
-    background-color: #d3d9df;
-    border-color: #adb5bd;
+    background-color: var(--surface);
+    color: var(--on-surface);
+}
+
+.control-btn:active {
+    background-color: var(--accent-soft);
+    color: var(--accent);
 }
 
 .control-value {
-    font-size: 1.1em;
-    font-weight: 500;
-    color: #3498db; /* Blue for value display */
-    min-width: 40px;
+    min-width: 46px;
     text-align: center;
-    padding: 0 10px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
 }
 
-.control-group small {
-    color: #95a5a6; /* Muted gray for hints */
-    font-size: 0.9em;
-    margin-left: 10px;
-    flex-basis: 120px; /* Give hints a consistent width */
-    text-align: right;
+/* Ancho fijo, no min-width: los hints tienen anchos distintos ("+" vs "PageDown") y con min-width
+   el más ancho empuja su stepper, desalineando los dos controles entre sí. */
+.control-hint {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 0 0 116px;
+    justify-content: flex-end;
 }
 
-/* Action Buttons */
+/* Estos kbd van justo al lado de botones reales y con el estilo de tecla "elevada" se leen como si
+   fueran pulsables — confusión detectada en pruebas con el usuario. Se aplanan (sin fondo, sin
+   sombra, borde punteado) para que se lean como una anotación de qué tecla hace lo mismo. */
+.control-hint::before {
+    content: "keys";
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--on-neutral);
+    opacity: 0.6;
+    margin-right: 2px;
+}
+
+.control-hint kbd {
+    background-color: transparent;
+    border: 1px dashed var(--border);
+    box-shadow: none;
+    opacity: 0.85;
+    padding: 2px 5px;
+    min-width: 0;
+}
+
+/* ─────────────────────────────────────────────
+   Keys
+   ───────────────────────────────────────────── */
+kbd {
+    display: inline-block;
+    padding: 3px 7px;
+    min-width: 26px;
+    text-align: center;
+    font-family: var(--font);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--on-neutral);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-key);
+}
+
+/* ─────────────────────────────────────────────
+   Action buttons
+   ───────────────────────────────────────────── */
 .action-buttons {
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 30px;
+    gap: 12px;
+    margin-bottom: 32px;
 }
 
-button { /* General button reset, specific styles below */
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+button {
+    font-family: var(--font);
 }
 
 .primary-button {
-    background-color: #3498db; /* Primary blue */
-    color: white;
-    padding: 12px 25px;
-    font-size: 1.1em;
+    flex: 1;
+    background-color: var(--accent);
+    color: var(--on-primary);
+    padding: 13px 28px;
+    font-size: 1rem;
+    font-weight: 600;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
+    transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), filter 180ms var(--ease);
+    box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
 }
 
 .primary-button:hover {
-    background-color: #2980b9; /* Darker blue on hover */
-    box-shadow: 0 6px 15px rgba(41, 128, 185, 0.3);
-    transform: translateY(-2px);
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
 }
 
 .primary-button:active {
-    transform: translateY(0px);
-    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.2);
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
 }
 
 .secondary-button {
     background-color: transparent;
-    color: #3498db;
-    padding: 10px 20px;
-    font-size: 1em;
-    border: 2px solid #3498db;
-    border-radius: 8px;
+    color: var(--on-surface);
+    padding: 13px 22px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
     cursor: pointer;
+    transition: border-color 180ms var(--ease), background-color 180ms var(--ease);
 }
 
 .secondary-button:hover {
-    background-color: rgba(52, 152, 219, 0.1);
-    color: #2980b9;
-    border-color: #2980b9;
+    border-color: var(--secondary);
+    background-color: var(--neutral);
 }
 
-
-/* Key Configuration Section */
+/* ─────────────────────────────────────────────
+   Key configuration panel
+   ───────────────────────────────────────────── */
 .key-config-section {
-    background-color: #f8f9fa; /* Very light gray background for this section */
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-    border: 1px solid #e9ecef;
+    background-color: var(--neutral);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
 }
+
 .key-config-instructions {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #555;
+    font-size: 0.8125rem;
+    color: var(--on-neutral);
+    margin-bottom: 18px;
+    margin-top: -8px;
 }
+
 .key-config-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px;
     margin-bottom: 20px;
 }
 
 .key-config-item {
     display: flex;
     align-items: center;
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #dde2e5;
+    gap: 12px;
+    background-color: var(--surface);
+    padding: 8px 8px 8px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
 }
 
 .key-config-item label {
-    flex-basis: 120px; /* Adjust as needed */
-    margin-right: 10px;
-    font-size: 0.95em;
-    color: #444;
+    flex: 1;
+    font-size: 0.875rem;
+    color: var(--on-neutral);
 }
 
 .key-config-item input[type="text"] {
-    flex-grow: 1;
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.95em;
-    background-color: #fdfdfd;
-    color: #3498db;
-    font-weight: 500;
+    width: 108px;
+    flex-shrink: 0;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 0.8125rem;
+    background-color: var(--neutral);
+    color: var(--accent);
+    font-weight: 600;
     text-align: center;
+    cursor: pointer;
+    transition: border-color 180ms var(--ease), box-shadow 180ms var(--ease);
 }
+
 .key-config-item input[type="text"]:focus {
-    border-color: #3498db;
+    border-color: var(--accent);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+    box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .key-config-actions {
     display: flex;
-    justify-content: center;
-    gap: 15px;
+    gap: 10px;
 }
 
-.tertiary-button, .tertiary-button-alt {
-    background-color: #6c757d; /* Gray */
-    color: white;
-    padding: 10px 20px;
-    font-size: 0.95em;
-    border: none;
-    border-radius: 6px;
+.tertiary-button,
+.tertiary-button-alt {
+    padding: 10px 18px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
     cursor: pointer;
+    transition: background-color 180ms var(--ease), border-color 180ms var(--ease);
 }
+
+.tertiary-button {
+    background-color: var(--accent);
+    color: var(--on-primary);
+    border: 1px solid transparent;
+}
+
 .tertiary-button:hover {
-    background-color: #5a6268;
+    filter: brightness(1.08);
 }
+
 .tertiary-button-alt {
     background-color: transparent;
-    color: #6c757d;
-    border: 1px solid #6c757d;
+    color: var(--on-neutral);
+    border: 1px solid var(--border);
 }
+
 .tertiary-button-alt:hover {
-    background-color: rgba(108, 117, 125, 0.1);
+    border-color: var(--secondary);
+    color: var(--on-surface);
 }
 
-/* Instructions Footer */
-.instructions-footer {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #ecf0f1;
-    font-size: 0.9em;
-    color: #7f8c8d;
-}
-.instructions-footer p {
-    font-weight: 500;
-    color: #555;
-    margin-bottom: 10px;
-}
-.instructions-footer ul {
+/* ─────────────────────────────────────────────
+   Shortcut reference
+   ───────────────────────────────────────────── */
+.shortcut-list {
     list-style: none;
-    padding-left: 0;
 }
-.instructions-footer li {
-    margin-bottom: 5px;
+
+.shortcut-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
 }
-.instructions-footer li strong {
-    color: #3498db; /* Blue for key display */
+
+.shortcut-list li:last-child {
+    border-bottom: none;
+}
+
+.shortcut-name {
+    font-size: 0.875rem;
+    color: var(--on-neutral);
+}
+
+.shortcut-keys {
+    display: flex;
+    gap: 4px;
+}
+
+/* ─────────────────────────────────────────────
+   Credits
+   ───────────────────────────────────────────── */
+.credits {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--on-neutral);
+}
+
+.credits a {
+    color: var(--accent);
+    text-decoration: none;
     font-weight: 500;
-    display: inline-block;
-    min-width: 70px; /* Ensure alignment */
+    border-bottom: 1px solid transparent;
+    transition: border-color 180ms var(--ease);
 }
 
+.credits a:hover {
+    border-bottom-color: var(--accent);
+}
 
-/* Teleprompter View Styles (Unchanged from original) */
+.credits-meta {
+    margin-top: 4px;
+    opacity: 0.75;
+}
+
+/* ─────────────────────────────────────────────
+   Toast
+   ───────────────────────────────────────────── */
+.toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translate(-50%, 12px);
+    padding: 11px 20px;
+    background-color: var(--on-surface);
+    color: var(--surface);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 260ms var(--ease), transform 260ms var(--ease);
+    z-index: 1100;
+}
+
+.toast.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* ─────────────────────────────────────────────
+   Teleprompter View — DO NOT RESTYLE.
+   Max contrast, zero distraction: this is the correct design for reading.
+   See dbv-specs-ops/docs/DESIGN.md
+   ───────────────────────────────────────────── */
 #teleprompter-view {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -326,17 +598,17 @@ button { /* General button reset, specific styles below */
     background-color: black;
     color: white;
     overflow: hidden;
-    font-size: 40px; /* Default font size */
+    font-size: 40px;
     text-align: center;
     z-index: 1000;
 }
 
 #teleprompter-text {
     position: relative;
-    padding: 40vh 5vw; /* Vertical padding to center text initially, horizontal for margins */
-    white-space: pre-wrap; /* Preserve line breaks and spaces */
+    padding: 40vh 5vw;
+    white-space: pre-wrap;
     line-height: 1.5;
-    transition: transform 0.1s linear; /* Smooth nudging */
+    transition: transform 0.1s linear;
 }
 
 #focus-indicator {
@@ -348,37 +620,60 @@ button { /* General button reset, specific styles below */
     height: 0;
     border-top: 15px solid transparent;
     border-bottom: 15px solid transparent;
-    border-left: 20px solid red; /* Red triangle */
+    border-left: 20px solid red;
     z-index: 1001;
 }
 
-/* Responsive adjustments for setup screen */
+/* ─────────────────────────────────────────────
+   Responsive
+   ───────────────────────────────────────────── */
 @media (max-width: 768px) {
     body {
-        padding: 10px;
+        padding: 16px 12px;
     }
+
     .container {
-        padding: 20px;
+        padding: 24px 20px;
+        border-radius: var(--radius-lg);
     }
-    header h1 {
-        font-size: 2em;
+
+    .brand-text h1 {
+        font-size: 1.5rem;
     }
+
     .control-group {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-wrap: wrap;
     }
-    .control-group label {
-        margin-bottom: 8px;
+
+    .control-hint {
+        display: none;
     }
-    .control-group small {
-        text-align: left;
-        margin-left: 0;
-        margin-top: 5px;
-    }
+
     .action-buttons {
         flex-direction: column;
     }
+
     .key-config-grid {
-        grid-template-columns: 1fr; /* Stack key config items on small screens */
+        grid-template-columns: 1fr;
+    }
+
+    .key-config-actions {
+        flex-direction: column;
+    }
+}
+
+/* ─────────────────────────────────────────────
+   Reduced motion
+   ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+
+    .primary-button:hover {
+        transform: none;
     }
 }

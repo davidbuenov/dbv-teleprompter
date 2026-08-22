@@ -1,11 +1,8 @@
 <!--
-    DBV PWA Teleprompter
-    Copyright (c) 2025 David Bueno Vallejo
-    Desarrollado por David Bueno Vallejo con la asistencia de la IA de Google.
-
-    Este software se distribuye bajo la Licencia MIT.
-    Consulta el archivo LICENSE para más detalles:
-    https://github.com/davidbuenov/DBVTeleprompter/blob/main/LICENSE
+    DBV Teleprompter — PWA + app de escritorio para leer texto en scroll
+    Copyright (c) 2025-2026 David Bueno Vallejo · https://davidbuenov.com
+    Licensed under the MIT License. See LICENSE for details.
+    https://github.com/davidbuenov/dbv-teleprompter
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -16,113 +13,152 @@
 
     <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#3498db"> <!-- Matches manifest.json theme_color -->
+    <meta name="theme-color" content="#2563EB">
 
     <!-- iOS specific PWA tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- or default, black -->
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png"> <!-- Or your preferred iOS icon size -->
-
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="setup-wrapper">
         <div class="container" id="setup-container">
-            <header>
-                <h1>Teleprompter</h1>
-                <p>Paste your script, configure, and start reading.</p>
+
+            <header class="app-header">
+                <div class="brand">
+                    <span class="brand-mark" aria-hidden="true">
+                        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="6" y="4" width="22" height="24" rx="3" fill="currentColor" opacity=".12"/>
+                            <rect x="10" y="10" width="14" height="2.4" rx="1.2" fill="currentColor"/>
+                            <rect x="10" y="15" width="14" height="2.4" rx="1.2" fill="currentColor" opacity=".65"/>
+                            <rect x="10" y="20" width="9" height="2.4" rx="1.2" fill="currentColor" opacity=".35"/>
+                            <path d="M0 11.2 5 16l-5 4.8z" fill="#DC2626"/>
+                        </svg>
+                    </span>
+                    <div class="brand-text">
+                        <h1>DBV Teleprompter</h1>
+                        <p class="tagline">Paste your script, set the pace, and read with confidence.</p>
+                    </div>
+                </div>
             </header>
 
             <section class="script-input-section">
-                <textarea id="text-input" placeholder="Paste your script here..."></textarea>
+                <div class="field-header">
+                    <label for="text-input">Your script</label>
+                    <div class="script-stats" id="script-stats">
+                        <span id="word-count">0 words</span>
+                        <span class="stat-dot" aria-hidden="true"></span>
+                        <span id="read-time">0:00</span>
+                    </div>
+                </div>
+                <textarea id="text-input" placeholder="Paste your script here…"></textarea>
             </section>
 
             <section class="controls-section">
                 <h2>Settings</h2>
+
                 <div class="control-group">
-                    <label for="speed-control">Scroll Speed:</label>
+                    <div class="control-label">
+                        <label for="speed-display">Scroll speed</label>
+                        <small>How fast the text moves</small>
+                    </div>
                     <div class="control-buttons">
-                        <button class="control-btn" onclick="changeSpeed(-0.1)">–</button>
+                        <button class="control-btn" onclick="changeSpeed(-0.1)" aria-label="Decrease scroll speed">&minus;</button>
                         <span id="speed-display" class="control-value">1.0</span>
-                        <button class="control-btn" onclick="changeSpeed(0.1)">+</button>
+                        <button class="control-btn" onclick="changeSpeed(0.1)" aria-label="Increase scroll speed">+</button>
                     </div>
-                    <small>(+/- keys)</small>
+                    <div class="control-hint"><kbd id="hint-speeddown">-</kbd><kbd id="hint-speedup">+</kbd></div>
                 </div>
+
                 <div class="control-group">
-                    <label for="fontsize-control">Font Size (px):</label>
-                    <div class="control-buttons">
-                        <button class="control-btn" onclick="changeFontSize(-2)">–</button>
-                        <span id="fontsize-display" class="control-value">40</span>
-                        <button class="control-btn" onclick="changeFontSize(2)">+</button>
+                    <div class="control-label">
+                        <label for="fontsize-display">Font size</label>
+                        <small>Measured in pixels</small>
                     </div>
-                    <small>(PageUp/PageDown)</small>
+                    <div class="control-buttons">
+                        <button class="control-btn" onclick="changeFontSize(-2)" aria-label="Decrease font size">&minus;</button>
+                        <span id="fontsize-display" class="control-value">40</span>
+                        <button class="control-btn" onclick="changeFontSize(2)" aria-label="Increase font size">+</button>
+                    </div>
+                    <div class="control-hint"><kbd id="hint-fontdown">PgDn</kbd><kbd id="hint-fontup">PgUp</kbd></div>
                 </div>
             </section>
-            
+
             <div class="action-buttons">
                 <button id="start-button" class="primary-button">Start Prompter</button>
                 <button id="show-key-config" class="secondary-button" onclick="toggleKeyConfig()">Configure Keys</button>
             </div>
 
             <section id="key-config-container" class="key-config-section" style="display:none;">
-                <h2>Key Configuration</h2>
-                <p class="key-config-instructions"><small>Click a box and press your desired key. (e.g., " ", "ArrowUp", "a", "Escape")</small></p>
+                <h2>Key configuration</h2>
+                <p class="key-config-instructions">Click a field and press the key you want to assign.</p>
                 <div class="key-config-grid">
                     <div class="key-config-item">
-                        <label for="key-playpause">Play/Pause:</label>
+                        <label for="key-playpause">Play / Pause</label>
                         <input type="text" id="key-playpause" readonly>
                     </div>
                     <div class="key-config-item">
-                        <label for="key-speedup">Speed Up:</label>
+                        <label for="key-speedup">Speed up</label>
                         <input type="text" id="key-speedup" readonly>
                     </div>
                     <div class="key-config-item">
-                        <label for="key-speeddown">Speed Down:</label>
+                        <label for="key-speeddown">Speed down</label>
                         <input type="text" id="key-speeddown" readonly>
                     </div>
                     <div class="key-config-item">
-                        <label for="key-fontup">Font Up:</label>
+                        <label for="key-fontup">Font up</label>
                         <input type="text" id="key-fontup" readonly>
                     </div>
                     <div class="key-config-item">
-                        <label for="key-fontdown">Font Down:</label>
+                        <label for="key-fontdown">Font down</label>
                         <input type="text" id="key-fontdown" readonly>
                     </div>
                     <div class="key-config-item">
-                        <label for="key-nudgeforward">Nudge Fwd:</label>
+                        <label for="key-nudgeforward">Nudge forward</label>
                         <input type="text" id="key-nudgeforward" readonly>
                     </div>
                     <div class="key-config-item">
-                        <label for="key-nudgebackward">Nudge Back:</label>
+                        <label for="key-nudgebackward">Nudge back</label>
                         <input type="text" id="key-nudgebackward" readonly>
                     </div>
                     <div class="key-config-item">
-                        <label for="key-exit">Exit Prompter:</label>
+                        <label for="key-exit">Exit prompter</label>
                         <input type="text" id="key-exit" readonly>
                     </div>
                 </div>
                 <div class="key-config-actions">
-                    <button onclick="saveKeyConfig()" class="tertiary-button">Save Config</button>
-                    <button onclick="loadKeyConfig(true)" class="tertiary-button-alt">Reset Defaults</button>
+                    <button onclick="saveKeyConfig()" class="tertiary-button">Save config</button>
+                    <button onclick="loadKeyConfig(true)" class="tertiary-button-alt">Reset defaults</button>
                 </div>
             </section>
 
-            <footer class="instructions-footer">
-                <p><strong>During Prompter:</strong></p>
-                <ul>
-                    <li>Play/Pause: <strong id="disp-playpause">Space</strong></li>
-                    <li>Speed: <strong id="disp-speedup">+</strong> / <strong id="disp-speeddown">-</strong></li>
-                    <li>Font Size: <strong id="disp-fontup">PageUp</strong> / <strong id="disp-fontdown">PageDown</strong></li>
-                    <li>Nudge: <strong id="disp-nudgeforward">ArrowDown</strong> / <strong id="disp-nudgebackward">ArrowUp</strong></li>
-                    <li>Exit: <strong id="disp-exit">Escape</strong></li>
+            <section class="instructions-footer">
+                <h2>While the prompter runs</h2>
+                <ul class="shortcut-list">
+                    <li><span class="shortcut-name">Play / Pause</span><kbd id="disp-playpause">Space</kbd></li>
+                    <li><span class="shortcut-name">Speed</span><span class="shortcut-keys"><kbd id="disp-speedup">+</kbd><kbd id="disp-speeddown">-</kbd></span></li>
+                    <li><span class="shortcut-name">Font size</span><span class="shortcut-keys"><kbd id="disp-fontup">PageUp</kbd><kbd id="disp-fontdown">PageDown</kbd></span></li>
+                    <li><span class="shortcut-name">Nudge</span><span class="shortcut-keys"><kbd id="disp-nudgeforward">ArrowDown</kbd><kbd id="disp-nudgebackward">ArrowUp</kbd></span></li>
+                    <li><span class="shortcut-name">Exit</span><kbd id="disp-exit">Escape</kbd></li>
                 </ul>
+            </section>
+
+            <footer class="credits">
+                <p>
+                    Built by <a href="https://davidbuenov.com" target="_blank" rel="noopener noreferrer">David Bueno Vallejo</a>
+                    · <a href="https://github.com/davidbuenov/dbv-teleprompter" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
+                </p>
+                <p class="credits-meta">Free and open source, MIT licensed.</p>
             </footer>
+
         </div>
     </div>
 
-    <!-- Teleprompter View (remains the same structurally) -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <!-- Teleprompter View — deliberately untouched, see dbv-specs-ops/docs/DESIGN.md -->
     <div id="teleprompter-view">
         <div id="focus-indicator"></div>
         <div id="teleprompter-text"></div>

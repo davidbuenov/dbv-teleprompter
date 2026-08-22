@@ -1,9 +1,9 @@
-# 🎨 Sistema de Diseño: [Nombre del Proyecto]
+# 🎨 Sistema de Diseño: DBV Teleprompter
 
 > **Fase:** `/spec` (Especificación Visual)
-> **Estado:** Borrador / Validado
-> **Última Revisión:** [Fecha]
-> **Aplica a:** Proyectos con interfaz de usuario (web, móvil, desktop). Opcional para proyectos sin UI.
+> **Estado:** Validado
+> **Última Revisión:** 2026-08-22
+> **Aplica a:** Pantalla de configuración (setup). La vista de prompting en marcha queda deliberadamente fuera — ver "Visión General".
 
 ---
 
@@ -16,179 +16,179 @@
 # DESIGN TOKENS — Legibles por la IA y por máquina
 # ────────────────────────────────────────────────
 version: alpha
-name: "[Nombre del Proyecto]"
-description: "[Breve descripción del estilo visual. Ej: Minimalismo editorial con acento en la claridad y el contraste.]"
+name: "DBV Teleprompter"
+description: "Herramienta de estudio: sobria, de alto contraste y sin ruido. La interfaz se aparta para que el guion sea el protagonista."
 
-# COLORES
-# Usa códigos HEX. El campo "on-X" es el color de texto que va sobre el color "X".
 colors:
-  primary:      "#[hex]"   # Color principal de marca
-  secondary:    "#[hex]"   # Color secundario / complementario
-  accent:       "#[hex]"   # Color de llamada a la acción (CTAs, highlights)
-  neutral:      "#[hex]"   # Fondo base neutro
-  surface:      "#[hex]"   # Fondo de tarjetas y contenedores
-  on-primary:   "#[hex]"   # Texto sobre "primary" (suele ser blanco o muy claro)
-  on-surface:   "#[hex]"   # Texto principal sobre "surface"
-  on-neutral:   "#[hex]"   # Texto secundario / mutado
-  error:        "#[hex]"   # Rojo para errores y alertas destructivas
-  success:      "#[hex]"   # Verde para confirmaciones y éxito
-  warning:      "#[hex]"   # Amarillo/naranja para advertencias
+  primary:      "#1E40AF"   # Azul profundo de marca
+  secondary:    "#475569"   # Slate — soporte, bordes, estados secundarios
+  accent:       "#2563EB"   # Azul vivo — el único motor de interacción
+  neutral:      "#F8FAFC"   # Fondo base
+  surface:      "#FFFFFF"   # Tarjetas y contenedores
+  on-primary:   "#FFFFFF"
+  on-surface:   "#0F172A"   # Texto principal
+  on-neutral:   "#64748B"   # Texto secundario / mutado
+  error:        "#DC2626"
+  success:      "#059669"
+  warning:      "#D97706"
 
-# MODO OSCURO (Dark Mode) — Opcional pero recomendado
-# Define los overrides de color. Los tokens no listados aquí heredan los valores de luz.
 dark:
-  primary:      "#[hex]"
-  secondary:    "#[hex]"
-  accent:       "#[hex]"
-  neutral:      "#[hex]"   # Ej: "#111111" — fondo oscuro principal
-  surface:      "#[hex]"   # Ej: "#1E1E1E" — tarjetas sobre fondo oscuro
-  on-primary:   "#[hex]"
-  on-surface:   "#[hex]"
-  on-neutral:   "#[hex]"
+  primary:      "#3B82F6"
+  secondary:    "#94A3B8"
+  accent:       "#60A5FA"
+  neutral:      "#0B1120"   # Gris azulado muy profundo, no negro puro
+  surface:      "#151C2C"
+  on-primary:   "#0B1120"
+  on-surface:   "#E2E8F0"
+  on-neutral:   "#94A3B8"
 
-# TIPOGRAFÍA
-# fontFamily: nombre exacto de Google Fonts o fuente del sistema.
 typography:
   heading:
-    fontFamily: "[Ej: Inter]"
-    fontSize:   2rem
+    fontFamily: "system-ui"
+    fontSize:   1.75rem
     fontWeight: 700
-    lineHeight: 1.2
+    lineHeight: 1.15
     letterSpacing: "-0.02em"
   subheading:
-    fontFamily: "[Ej: Inter]"
-    fontSize:   1.25rem
+    fontFamily: "system-ui"
+    fontSize:   0.8125rem
     fontWeight: 600
     lineHeight: 1.3
+    letterSpacing: "0.06em"   # Versalitas para títulos de sección
   body:
-    fontFamily: "[Ej: Inter]"
+    fontFamily: "system-ui"
     fontSize:   1rem
     fontWeight: 400
     lineHeight: 1.6
   label:
-    fontFamily: "[Ej: Inter]"
-    fontSize:   0.875rem
+    fontFamily: "system-ui"
+    fontSize:   0.9375rem
     fontWeight: 500
-    letterSpacing: "0.01em"
   caption:
-    fontFamily: "[Ej: Inter]"
-    fontSize:   0.75rem
+    fontFamily: "system-ui"
+    fontSize:   0.8125rem
     fontWeight: 400
 
-# BORDES Y RADIOS
 rounded:
   none: 0px
-  sm:   4px
-  md:   8px
+  sm:   6px
+  md:   10px
   lg:   16px
-  xl:   24px
+  xl:   20px
   full: 9999px
 
-# ESPACIADO (escala base 4px)
 spacing:
   xs:  4px
   sm:  8px
   md:  16px
   lg:  24px
-  xl:  48px
-  xxl: 96px
+  xl:  40px
+  xxl: 72px
 
-# COMPONENTES — Mapeo de tokens a elementos de UI concretos
-# Usa referencias {ruta.al.token} para garantizar coherencia.
 components:
   button-primary:
     backgroundColor: "{colors.accent}"
     textColor:       "{colors.on-primary}"
-    typography:      "{typography.label}"
     rounded:         "{rounded.md}"
-    padding:         "12px 24px"
-  button-primary-hover:
-    backgroundColor: "{colors.primary}"
+    padding:         "13px 28px"
   button-secondary:
     backgroundColor: "transparent"
-    textColor:       "{colors.accent}"
-    rounded:         "{rounded.md}"
-    padding:         "12px 24px"
-    border:          "1.5px solid {colors.accent}"
-  card:
-    backgroundColor: "{colors.surface}"
-    rounded:         "{rounded.lg}"
-    padding:         "{spacing.lg}"
-  input:
-    backgroundColor: "{colors.surface}"
     textColor:       "{colors.on-surface}"
     rounded:         "{rounded.md}"
-    padding:         "10px 14px"
-    border:          "1px solid {colors.on-neutral}"
+    padding:         "13px 22px"
+    border:          "1px solid {colors.secondary}"
+  card:
+    backgroundColor: "{colors.surface}"
+    rounded:         "{rounded.xl}"
+    padding:         "{spacing.xl}"
+  input:
+    backgroundColor: "{colors.neutral}"
+    textColor:       "{colors.on-surface}"
+    rounded:         "{rounded.md}"
+    border:          "1px solid transparent"
   input-focus:
-    border:          "2px solid {colors.accent}"
+    border:          "1px solid {colors.accent}"
+    ring:            "3px rgba(37, 99, 235, 0.15)"
+  stepper:
+    description:     "Grupo -/valor/+ como una sola pastilla segmentada, no tres controles sueltos"
+    backgroundColor: "{colors.neutral}"
+    rounded:         "{rounded.md}"
+  kbd:
+    description:     "Tecla física: fondo surface, borde 1px, sombra inferior de 1px"
+    rounded:         "{rounded.sm}"
 ```
 
 ---
 
 ## Visión General
 
-*[2-3 frases que describan la filosofía visual del proyecto. ¿Qué emoción o sensación debe evocar la interfaz? ¿Qué referentes de diseño lo inspiran?]*
+La app tiene **dos pantallas con propósitos opuestas, y el sistema de diseño solo gobierna una**.
 
-> Ejemplo: *"La interfaz combina minimalismo editorial con toques de calidez. Cada elemento comunica claridad y confianza, evocando las mejores herramientas SaaS profesionales. El usuario debe sentir que está usando algo construido para durar."*
+La **vista de prompting** (texto blanco sobre negro, indicador rojo) es funcional y está terminada: su fealdad aparente *es* el diseño correcto — máximo contraste, cero distracción, nada que compita con el guion. **No se toca.**
+
+La **pantalla de setup** es donde vive esta identidad: sobria, con aire, jerarquía clara y densidad baja. El usuario suele estar aquí un minuto antes de grabar, a menudo con prisa y a veces en un estudio a oscuras. Debe encontrar todo de un vistazo y no ser deslumbrado. De ahí el modo oscuro automático y la ausencia total de decoración.
 
 ---
 
 ## 🎨 Colores
 
-*Explica el rol de cada color y cómo debe (y no debe) usarse.*
-
-- **Primary (`[hex]`):** [Ej: Azul profundo. Color de marca principal. Úsalo en headers y elementos clave de navegación. Nunca en fondos de página completa.]
-- **Secondary (`[hex]`):** [Ej: Gris azulado. Para elementos de soporte, bordes y estados secundarios.]
-- **Accent (`[hex]`):** [Ej: Coral. El único motor de interacción — todos los CTAs, enlaces y elementos activos usan este color. Resérvalo para acciones, no decoración.]
-- **Neutral (`[hex]`):** [Ej: Blanco cálido. Base de todas las páginas. Más suave que el blanco puro para reducir la fatiga visual.]
-- **Surface (`[hex]`):** [Ej: Gris muy claro. Para tarjetas, modales y paneles que elevan el contenido del fondo.]
-- **Error / Success / Warning:** [Semánticos. Solo para feedback del sistema, nunca como decoración.]
+- **Primary (`#1E40AF`):** azul profundo de marca. Wordmark y elementos de identidad. Nunca en fondos de página completa.
+- **Secondary (`#475569`):** slate. Bordes, separadores y texto de soporte.
+- **Accent (`#2563EB`):** el único motor de interacción — CTA principal, foco de inputs, valores activos de los steppers, enlaces. Reservado para acciones, jamás como decoración.
+- **Neutral (`#F8FAFC`):** base de la página y fondo de campos. Ligeramente frío para que el blanco de la tarjeta destaque como superficie elevada.
+- **Surface (`#FFFFFF`):** la tarjeta que contiene toda la configuración.
+- **Error / Success / Warning:** solo feedback del sistema (p. ej. confirmación al guardar atajos).
 
 ### Modo Oscuro
-*[Describe la estrategia del modo oscuro. ¿Es una inversión completa, una paleta propia, o solo algunos colores cambian?]*
 
-- **Estrategia:** [Ej: "Los fondos usan grises profundos (no negro puro) para evitar halos. Los colores de marca se mantienen, pero con mayor luminosidad para cumplir contraste WCAG AA sobre fondos oscuros."]
+- **Estrategia:** paleta propia, no inversión. Fondos en gris azulado profundo (`#0B1120`) en lugar de negro puro, para evitar halos alrededor del texto y no chocar con el negro absoluto de la vista de prompting. El azul de marca sube en luminosidad (`#3B82F6` / `#60A5FA`) para mantener contraste WCAG AA sobre fondo oscuro.
+- **Activación:** automática vía `prefers-color-scheme`. Sin conmutador manual: es una app que se abre y se usa en un minuto, un ajuste más sería ruido.
 
 ---
 
 ## ✍️ Tipografía
 
-*Justifica la elección de fuentes y explica la escala.*
-
-- **Fuente principal:** [Ej: `Inter` — Elegida por su excelente legibilidad en pantalla a todos los tamaños y su amplia familia de pesos.]
-- **Fuente alternativa:** [Ej: `System UI` como fallback para carga instantánea sin layout shift.]
-- **Escala:** La escala tipográfica sigue una progresión modular de 1.25. Los headings usan tracking negativo (-0.02em) para aspecto más premium. El body usa lineHeight 1.6 para máxima legibilidad.
-- **No usar:** [Ej: Nunca mezclar más de 2 familias tipográficas. Nunca usar `font-weight: 300` en textos menores de 16px sobre fondo oscuro.]
+- **Fuente principal:** *system font stack* (`Segoe UI Variable` en Windows, `SF Pro` en macOS, `Inter`/`Roboto` en Linux). **Decisión deliberada: se eliminó la dependencia de Google Fonts.** Era el único recurso de red de toda la app y obligaba al binario de escritorio a tener conexión en el primer arranque para renderizar correctamente. Las fuentes de sistema son excelentes, cargan instantáneamente y no producen layout shift. Esto resuelve la pregunta abierta sobre vendorizar la tipografía: no hay nada que vendorizar.
+- **Escala:** progresión modular suave. Headings con tracking negativo (`-0.02em`); títulos de sección en versalitas con tracking positivo (`0.06em`) para separarlos sin necesidad de reglas ni tamaños grandes.
+- **Cifras:** los valores numéricos de los controles usan `font-variant-numeric: tabular-nums` para que no bailen al incrementarse.
+- **No usar:** más de una familia tipográfica. Pesos por debajo de 400.
 
 ---
 
 ## 🧩 Componentes Clave
 
-*Describe las decisiones de diseño de los componentes más importantes.*
-
 ### Botones
-- **Primary:** [Ej: "Fondo accent, texto blanco, radio md. Único por pantalla. Es el grito — solo uno debe gritar."]
-- **Secondary:** [Ej: "Contorno transparente con borde accent. Para acciones importantes pero no primarias."]
-- **Ghost / Text:** [Ej: "Sin borde ni fondo. Para acciones terciarias o en contextos densos de información."]
+- **Primary:** fondo accent, radio md. **Uno solo por pantalla** (`Start Prompter`). Es el grito — solo uno debe gritar.
+- **Secondary:** contorno de 1px sobre transparente. Para acciones importantes pero no primarias (`Configure Keys`).
+- **Stepper (`−` / valor / `+`):** los tres elementos forman **una sola pastilla segmentada**, no tres controles sueltos flotando. Es el cambio de mayor impacto visual frente al diseño anterior.
 
-### Tarjetas (Cards)
-- [Ej: "Surface background, radio lg, sombra suave (`box-shadow: 0 2px 8px rgba(0,0,0,0.08)`). Sin borde. El espacio interno mínimo es spacing.lg (24px)."]
+### Tarjeta
+- Surface, radio xl, sombra difusa y muy suave (`0 1px 3px` + `0 12px 32px` a baja opacidad). Sin borde en claro; borde sutil de 1px en oscuro, donde la sombra no se percibe.
+
+### Teclas (`<kbd>`)
+- Los atajos se representan como teclas físicas, no como texto en negrita. Un borde de 1px y 1px de sombra inferior bastan para leerlas como pulsables sin recargar.
 
 ### Formularios
-- [Ej: "Inputs con borde de 1px neutral. En focus, el borde aumenta a 2px y cambia a accent. Nunca uses fondos coloreados en campos de formulario."]
+- Inputs sobre fondo neutral con borde transparente; en focus el borde pasa a accent y aparece un halo de 3px. Nunca fondos coloreados.
 
 ---
 
 ## ✨ Movimiento e Interacción
 
-*Define la "física" de la interfaz: velocidades, curvas de animación y principios.*
-
-- **Duración base:** `200ms` para micro-interacciones (hover, focus). `350ms` para transiciones de página o apertura de modales.
-- **Easing:** `cubic-bezier(0.4, 0, 0.2, 1)` (Material Design Standard) para la mayoría de animaciones. `ease-out` para elementos que "caen" en pantalla. `ease-in` para elementos que "salen".
-- **Principio:** [Ej: "Las animaciones son funcionales, no decorativas. Si eliminar una animación no reduce la comprensión, elimínala."]
-- **Reducción de movimiento:** Siempre respeta `prefers-reduced-motion`. Sustituye transiciones por cambios instantáneos o fundidos muy cortos (50ms).
+- **Duración base:** `180ms` para micro-interacciones (hover, focus). `260ms` para aparición de paneles (configuración de teclas, toast).
+- **Easing:** `cubic-bezier(0.4, 0, 0.2, 1)`.
+- **Principio:** las animaciones son funcionales. El único movimiento no estrictamente informativo es el ligero desplazamiento del CTA en hover, que confirma que es pulsable.
+- **Reducción de movimiento:** `prefers-reduced-motion` anula todas las transiciones y transformaciones.
 
 ---
 
-**Instrucción para la IA:** Lee y respeta los tokens y decisiones definidos en este fichero. Si necesitas crear un componente no definido aquí, extrapola coherentemente desde los tokens existentes y registra la nueva decisión como "Decisión de Diseño" en este mismo archivo con fecha y justificación. Para proyectos sin UI, este fichero puede omitirse.
+## 📌 Decisiones de Diseño
+
+- **2026-08-22 — Rediseño de la pantalla de setup.** El diseño original (2025) usaba una paleta *flat* heredada de la época (`#3498db`, `#2c3e50`, `#ecf0f1`) que había envejecido mal, con controles sueltos sin agrupar y jerarquía plana. Se rediseñó por completo manteniendo el HTML compatible con `script.js` (todos los `id` y los `onclick` inline intactos). Se corrigió además el título, que decía solo "Teleprompter" en lugar del nombre real del producto.
+- **2026-08-22 — Eliminada la dependencia de Google Fonts.** Ver sección de Tipografía. Cierra la pregunta abierta nº 7 de `SPECIFICATIONS.md`.
+- **2026-08-22 — `alert()` sustituido por un toast propio** al guardar los atajos. Los diálogos nativos del navegador son ajenos al sistema de diseño y, dentro de un WebView de Tauri, tienen comportamiento irregular entre plataformas (ver `NATIVE_DESKTOP_APPS.md` §6.2). Un toast en HTML se comporta igual en los cuatro entornos.
+- **2026-08-22 — Añadido contador de palabras y duración estimada.** No es decoración: para quien prepara una grabación, saber que su guion dura ~2:40 a 140 palabras/minuto es información de trabajo. Se ubica junto a la etiqueta del campo de texto, donde se lee sin buscarla.
+
+---
+
+**Instrucción para la IA:** Lee y respeta los tokens y decisiones definidos en este fichero. Si necesitas crear un componente no definido aquí, extrapola coherentemente desde los tokens existentes y registra la nueva decisión como "Decisión de Diseño" en este mismo archivo con fecha y justificación. **La vista de prompting (`#teleprompter-view`, `#teleprompter-text`, `#focus-indicator`) está fuera del alcance de este sistema y no debe modificarse.**

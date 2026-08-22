@@ -1,11 +1,11 @@
 /*
- * DBV PWA Teleprompter
- * Copyright (c) 2024 David Bueno Vallejo
- * Desarrollado por David Bueno Vallejo con la asistencia de la IA de Google.
+ * DBV Teleprompter — PWA + app de escritorio para leer texto en scroll
+ * Copyright (c) 2025-2026 David Bueno Vallejo · https://davidbuenov.com
+ * Desarrollado por David Bueno Vallejo con la asistencia de IA.
  *
  * Este software se distribuye bajo la Licencia MIT.
  * Consulta el archivo LICENSE para más detalles:
- * https://github.com/davidbuenov/DBVTeleprompter/blob/main/LICENSE
+ * https://github.com/davidbuenov/dbv-teleprompter/blob/main/LICENSE
  */
 
 // DOM Elements
@@ -19,6 +19,15 @@ const fontSizeDisplay = document.getElementById('fontsize-display');
 const keyConfigContainer = document.getElementById('key-config-container');
 const showKeyConfigButton = document.getElementById('show-key-config');
 
+// Script stats
+const scriptStats = document.getElementById('script-stats');
+const wordCountDisplay = document.getElementById('word-count');
+const readTimeDisplay = document.getElementById('read-time');
+
+// Toast
+const toastElement = document.getElementById('toast');
+let toastTimeoutId;
+
 // Key display elements in footer
 const dispPlayPause = document.getElementById('disp-playpause');
 const dispSpeedUp = document.getElementById('disp-speedup');
@@ -29,6 +38,12 @@ const dispNudgeFwd = document.getElementById('disp-nudgeforward');
 const dispNudgeBack = document.getElementById('disp-nudgebackward');
 const dispExit = document.getElementById('disp-exit');
 
+// Key hints shown next to the speed / font steppers
+const hintSpeedUp = document.getElementById('hint-speedup');
+const hintSpeedDown = document.getElementById('hint-speeddown');
+const hintFontUp = document.getElementById('hint-fontup');
+const hintFontDown = document.getElementById('hint-fontdown');
+
 
 // State Variables
 let currentSpeed = 1.0; // Pixels per frame
@@ -37,6 +52,33 @@ let isRunning = false;
 let animationFrameId;
 let currentScrollY = 0;
 const nudgeAmount = 50; // pixels to nudge by
+const wordsPerMinute = 140; // average speaking pace, used for the duration estimate
+
+// Shows a short message at the bottom of the screen. Replaces alert(): native dialogs look foreign
+// inside the app and behave inconsistently across Tauri's WebViews on each platform.
+function showToast(message) {
+    if (!toastElement) return;
+    toastElement.textContent = message;
+    toastElement.classList.add('is-visible');
+    clearTimeout(toastTimeoutId);
+    toastTimeoutId = setTimeout(() => toastElement.classList.remove('is-visible'), 2400);
+}
+
+// Word count + estimated spoken duration. Useful when preparing a recording: knowing a script runs
+// ~2:40 is working information, not decoration.
+function updateScriptStats() {
+    if (!wordCountDisplay || !readTimeDisplay) return;
+
+    const words = textInput.value.trim().split(/\s+/).filter(Boolean).length;
+    wordCountDisplay.textContent = words === 1 ? '1 word' : `${words} words`;
+
+    const totalSeconds = Math.round((words / wordsPerMinute) * 60);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    readTimeDisplay.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
+
+    scriptStats.classList.toggle('is-active', words > 0);
+}
 
 // Key Configuration
 let keyConfig = {};
@@ -51,15 +93,42 @@ const defaultKeyConfig = {
     exit: 'Escape'
 };
 
+// Compact key names for the hints next to the steppers, where horizontal space is tight and a long
+// name ("PageDown") would push its stepper out of line with the other one. The reference table below
+// has room, so it keeps the full names.
+const shortKeyLabels = {
+    ' ': 'Space',
+    'PageUp': 'PgUp',
+    'PageDown': 'PgDn',
+    'ArrowUp': '↑',
+    'ArrowDown': '↓',
+    'ArrowLeft': '←',
+    'ArrowRight': '→',
+    'Escape': 'Esc',
+    '=': '+'
+};
+
+function shortKeyLabel(key) {
+    return shortKeyLabels[key] || key;
+}
+
 function updateKeyDisplayFooter() {
+    const speedUpLabel = keyConfig.speedUp === '=' ? '+' : keyConfig.speedUp;
+
     dispPlayPause.textContent = keyConfig.playPause === ' ' ? 'Space' : keyConfig.playPause;
-    dispSpeedUp.textContent = keyConfig.speedUp === '=' ? '+' : keyConfig.speedUp;
+    dispSpeedUp.textContent = speedUpLabel;
     dispSpeedDown.textContent = keyConfig.speedDown;
     dispFontUp.textContent = keyConfig.fontUp;
     dispFontDown.textContent = keyConfig.fontDown;
     dispNudgeFwd.textContent = keyConfig.nudgeForward;
     dispNudgeBack.textContent = keyConfig.nudgeBackward;
     dispExit.textContent = keyConfig.exit;
+
+    // Keep the hints next to each stepper in sync with the configured keys
+    hintSpeedUp.textContent = shortKeyLabel(keyConfig.speedUp);
+    hintSpeedDown.textContent = shortKeyLabel(keyConfig.speedDown);
+    hintFontUp.textContent = shortKeyLabel(keyConfig.fontUp);
+    hintFontDown.textContent = shortKeyLabel(keyConfig.fontDown);
 }
 
 function loadKeyConfig(forceDefaults = false) {
@@ -103,7 +172,7 @@ function saveKeyConfig() {
     keyConfig.nudgeBackward = document.getElementById('key-nudgebackward').value;
     keyConfig.exit = document.getElementById('key-exit').value;
     localStorage.setItem('teleprompterKeyConfig', JSON.stringify(keyConfig));
-    alert('Key configuration saved!');
+    showToast('Key configuration saved');
     updateKeyDisplayFooter();
 }
 
@@ -184,7 +253,8 @@ function scrollLoop() {
 function startPrompter() {
     const text = textInput.value;
     if (!text.trim()) {
-        alert("Please paste some text first.");
+        showToast('Paste your script first');
+        textInput.focus();
         return;
     }
     teleprompterText.innerHTML = text.replace(/\n/g, '<br>'); // Ensure line breaks are rendered
@@ -293,19 +363,47 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedText) {
         textInput.value = savedText;
     }
+    updateScriptStats();
+
     textInput.addEventListener('input', () => {
         localStorage.setItem('teleprompterLastText', textInput.value);
+        updateScriptStats();
     });
 });
-// PWA Service Worker Registration
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(registration => {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      })
-      .catch(error => {
-        console.log('ServiceWorker registration failed: ', error);
-      });
-  });
-}
+// PWA Service Worker Registration — web mode only.
+//
+// In the desktop build the assets already travel inside the binary, so the Service Worker adds
+// nothing offline and actively causes harm: it serves cache-first, which means an old copy of the
+// interface survives a binary update. If one was registered by an earlier build, tear it down.
+//
+// Wrapped in an IIFE on purpose. Classic scripts share one global scope, and `withGlobalTauri: true`
+// already defines names of its own there — a top-level `const` that collides kills this whole file
+// with a *parse* error, so not even the first line runs. See dbv-specs-ops/docs/NATIVE_DESKTOP_APPS.md §3.
+(function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+
+  const runningInTauri = typeof window !== 'undefined' && !!window.__TAURI__;
+
+  if (!runningInTauri) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(registration => {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        })
+        .catch(error => {
+          console.log('ServiceWorker registration failed: ', error);
+        });
+    });
+    return;
+  }
+
+  navigator.serviceWorker.getRegistrations()
+    .then(registrations => registrations.forEach(registration => registration.unregister()))
+    .catch(() => { /* nothing registered, nothing to clean up */ });
+
+  if (window.caches && caches.keys) {
+    caches.keys()
+      .then(names => names.forEach(name => caches.delete(name)))
+      .catch(() => { /* no cache storage available */ });
+  }
+})();
