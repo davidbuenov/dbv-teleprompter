@@ -1,6 +1,6 @@
 [package]
 name = "dbv-teleprompter"
-version = "0.2.0"
+version = "0.2.1"
 description = "DBV Teleprompter — teleprompter desktop app with web/PWA dual mode"
 authors = ["David Bueno Vallejo"]
 edition = "2021"

@@ -9,13 +9,15 @@
  * La app de escritorio NO registra este worker: los assets ya viajan dentro del binario.
  * Ver el final de script.js.
  */
-const CACHE_NAME = 'teleprompter-cache-v3.8'; // Increment version if you change cached files
+const CACHE_NAME = 'teleprompter-cache-v3.9'; // Increment version if you change cached files
 const urlsToCache = [
   '.', // Alias for index.html
   'index.html',
   'style.css',
   'script.js',
   'manifest.json',
+  'privacy.html',
+  'privacidad.html',
   'icons/icon-192x192.png',
   'icons/icon-512x512.png',
   'fonts/newsreader-300-latin.woff2',

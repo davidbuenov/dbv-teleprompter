@@ -167,7 +167,9 @@ function t(path) {
     return getVal(translations[currentLang]) ?? getVal(translations.en) ?? path;
 }
 
-const isTauri = () => typeof window !== 'undefined' && typeof window.__TAURI__?.core?.invoke === 'function';
+// No renombrar a `isTauri`: colisiona con un global que Tauri inyecta y mata este fichero entero.
+// El porque y la comprobacion que lo impide viven en `scripts/sync-frontend.mjs`.
+const runningInTauri = () => typeof window.__TAURI__?.core?.invoke === 'function';
 
 // DOM Elements
 const textInput = document.getElementById('text-input');
@@ -346,7 +348,7 @@ function handleFileSelect(event) {
 
 async function openFileDialog() {
     // 1. If running in Tauri, use the native OS file picker via Rust command
-    if (isTauri()) {
+    if (runningInTauri()) {
         try {
             const result = await window.__TAURI__.core.invoke('open_file_dialog');
             if (result) {
@@ -385,7 +387,7 @@ async function saveScriptFile() {
     const filename = `${safeTitle}.txt`;
 
     // 1. If running in Tauri, open the native OS "Save As" file dialog via Rust command
-    if (isTauri()) {
+    if (runningInTauri()) {
         try {
             const saved = await window.__TAURI__.core.invoke('save_file_dialog', {
                 defaultName: filename,
@@ -649,7 +651,10 @@ function startPrompter() {
         textInput.focus();
         return;
     }
-    teleprompterText.innerHTML = text.replace(/\n/g, '<br>'); // Ensure line breaks are rendered
+    // `textContent`, no `innerHTML`: el guion sale de un fichero que abre el usuario, y con
+    // `csp: null` + `withGlobalTauri` un `<img onerror>` incrustado tendria acceso a `invoke`.
+    // Los saltos de linea no necesitan <br>: #teleprompter-text ya es `white-space: pre-wrap`.
+    teleprompterText.textContent = text;
     teleprompterText.style.fontSize = currentFontSize + 'px';
 
     currentScrollY = 0;
@@ -831,9 +836,7 @@ document.addEventListener('DOMContentLoaded', () => {
 (function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
 
-  const runningInTauri = typeof window !== 'undefined' && !!window.__TAURI__;
-
-  if (!runningInTauri) {
+  if (!runningInTauri()) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js')
         .then(registration => {
