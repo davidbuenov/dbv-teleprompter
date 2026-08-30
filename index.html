@@ -59,7 +59,7 @@
                     <button id="lang-en" class="lang-btn" type="button">EN</button>
                 </div>
                 <button id="theme-toggle" class="ghost-btn" type="button">Light</button>
-                <button id="show-key-config" class="ghost-btn" type="button" onclick="toggleKeyConfig()" data-i18n="header.keys" data-i18n-title="header.keysTitle">Keys</button>
+                <button id="show-key-config" class="ghost-btn" type="button" data-action="toggle-keys" data-i18n="header.keys" data-i18n-title="header.keysTitle">Keys</button>
             </div>
         </header>
 
@@ -84,18 +84,18 @@
                 <div class="control-block">
                     <div class="eyebrow" data-i18n="controls.speed">Scroll speed</div>
                     <div class="stepper">
-                        <button class="stepper-btn" onclick="changeSpeed(-0.1)" aria-label="Decrease scroll speed" data-i18n-aria="controls.speed_decrease">&minus;</button>
+                        <button id="btn-speed-down" class="stepper-btn" aria-label="Decrease scroll speed" data-i18n-aria="controls.speed_decrease">&minus;</button>
                         <div class="stepper-value" id="speed-display" aria-live="polite">1.0×</div>
-                        <button class="stepper-btn" onclick="changeSpeed(0.1)" aria-label="Increase scroll speed" data-i18n-aria="controls.speed_increase">+</button>
+                        <button id="btn-speed-up" class="stepper-btn" aria-label="Increase scroll speed" data-i18n-aria="controls.speed_increase">+</button>
                     </div>
                 </div>
 
                 <div class="control-block">
                     <div class="eyebrow" data-i18n="controls.fontsize">Font size</div>
                     <div class="stepper">
-                        <button class="stepper-btn" onclick="changeFontSize(-2)" aria-label="Decrease font size" data-i18n-aria="controls.fontsize_decrease">&minus;</button>
+                        <button id="btn-font-down" class="stepper-btn" aria-label="Decrease font size" data-i18n-aria="controls.fontsize_decrease">&minus;</button>
                         <div class="stepper-value" id="fontsize-display" aria-live="polite">40</div>
-                        <button class="stepper-btn" onclick="changeFontSize(2)" aria-label="Increase font size" data-i18n-aria="controls.fontsize_increase">+</button>
+                        <button id="btn-font-up" class="stepper-btn" aria-label="Increase font size" data-i18n-aria="controls.fontsize_increase">+</button>
                     </div>
                 </div>
 
@@ -131,18 +131,18 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="status-label" data-i18n="transport.ready">Ready</span>
             <div class="transport-spacer"></div>
-            <button class="ghost-btn transport-btn" type="button" onclick="toggleKeyConfig()" data-i18n="transport.configure_keys">Configure keys</button>
+            <button class="ghost-btn transport-btn" type="button" data-action="toggle-keys" data-i18n="transport.configure_keys">Configure keys</button>
             <button id="start-button" class="primary-btn" data-i18n="transport.start" data-i18n-title="transport.startTitle">Start prompter</button>
         </footer>
     </div>
 
     <!-- Key configuration — slide-in panel. Same fields and the same
          toggleKeyConfig() / saveKeyConfig() / loadKeyConfig() logic as before. -->
-    <div class="key-config-overlay" id="key-config-overlay" onclick="toggleKeyConfig()"></div>
+    <div class="key-config-overlay" id="key-config-overlay" data-action="toggle-keys"></div>
     <aside class="key-config-panel" id="key-config-container" aria-hidden="true">
         <div class="key-config-panel-header">
             <h2 data-i18n="keyconfig.title">Key configuration</h2>
-            <button class="icon-btn" type="button" onclick="toggleKeyConfig()" aria-label="Close" data-i18n-aria="keyconfig.close">&times;</button>
+            <button class="icon-btn" type="button" data-action="toggle-keys" aria-label="Close" data-i18n-aria="keyconfig.close">&times;</button>
         </div>
         <p class="key-config-instructions" data-i18n="keyconfig.instructions">Click a field and press the key you want to assign.</p>
         <div class="key-config-list">
@@ -180,8 +180,8 @@
             </div>
         </div>
         <div class="key-config-actions">
-            <button onclick="saveKeyConfig()" class="primary-btn" data-i18n="keyconfig.save">Save config</button>
-            <button onclick="loadKeyConfig(true)" class="ghost-btn" data-i18n="keyconfig.reset">Reset defaults</button>
+            <button id="btn-save-keys" class="primary-btn" data-i18n="keyconfig.save">Save config</button>
+            <button id="btn-reset-keys" class="ghost-btn" data-i18n="keyconfig.reset">Reset defaults</button>
         </div>
         <p class="credits" data-i18n-html="keyconfig.credits">
             Built by <a href="https://davidbuenov.com" target="_blank" rel="noopener noreferrer">David Bueno Vallejo</a>

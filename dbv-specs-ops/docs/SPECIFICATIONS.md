@@ -32,7 +32,7 @@
 
 ## 🏗️ 4. Propuesta de Solución Técnica (Resumen)
 
-- **Enfoque:** Arquetipo A (estática pura) según `docs/WEB_TO_DESKTOP_MIGRATION.md` — sin paso de build, sin backend. Tauri v2 envuelve el mismo `index.html`/`style.css`/`script.js` (`frontendDist` apuntando a la raíz, `withGlobalTauri: true`), sin reescribir nada en Rust más allá del core generado por la plantilla.
+- **Enfoque:** Arquetipo A (estática pura) según `docs/WEB_TO_DESKTOP_MIGRATION.md` — sin paso de build, sin backend. Tauri v2 envuelve el mismo `index.html`/`style.css`/`script.js` (`frontendDist` apunta a `src-tauri/frontend/`, una copia generada por `scripts/sync-frontend.mjs`; **no a la raíz** — ver el ADR del 2026-08-22 en `memory.md` y `docs/ARCHITECTURE.md`), con `withGlobalTauri: true` y sin reescribir nada en Rust más allá del core generado por la plantilla.
 - **Dependencias Críticas:** Ninguna dependencia de red en tiempo de ejecución salvo la fuente de Google Fonts (pendiente decidir si se vendoriza).
 - **Oportunidades de Skills y MCPs**: N/A — app sin backend ni datos externos que orquestar.
 - **Sistema de Diseño:** No se ha definido `docs/DESIGN.md` todavía; el estilo actual vive en `style.css`. Opcional, no bloqueante.
@@ -49,8 +49,10 @@ No aplica — `Agent Readiness (Web)` está marcado como `No` en `project.config
 
 ## ⚠️ 6. Riesgos y Mitigación
 
-- **Riesgo:** El binario de escritorio compila en un entorno aislado pero no se ha probado como app real (ventana, atajos de teclado, `localStorage`, fuente web) — el `cargo check` verificado solo confirma que el *core* de Rust compila, no que la app funcione.
-  - **Mitigación:** Ejecutar `npm run tauri dev` y probar manualmente el golden path antes de dar por cerrada la Fase 4/5 (ver `task.md`).
+- **Riesgo `[MATERIALIZADO 2026-08-29]`:** El binario de escritorio compila en un entorno aislado pero no se ha probado como app real (ventana, atajos de teclado, `localStorage`, fuente web) — el `cargo check` verificado solo confirma que el *core* de Rust compila, no que la app funcione.
+  - **Qué pasó:** Este riesgo se cumplió exactamente como estaba descrito. La v0.2.0 se publicó en Microsoft Store, Uptodown y GitHub Releases (Windows, macOS y Linux) con **la interfaz completamente muerta**: un `const isTauri` en el ámbito global de `script.js` colisionaba con el global homónimo que Tauri inyecta y mataba el fichero entero en *parseo*. La app abría y renderizaba perfecta —HTML y CSS no dependen del JS—, y solo respondía el `textarea`, que es nativo. Nada en el proceso de build avisó.
+  - **Mitigación reforzada (v0.2.1):** (1) IIFE obligatoria en todos los ficheros JS propios, que elimina la clase de fallo de raíz — ver `docs/ARCHITECTURE.md`, "Estilo de Código". (2) Puerta de build en `scripts/sync-frontend.mjs`, que corre en los tres workflows de release vía `tauri-action`. (3) **Probar siempre el binario que se publica**, no el de `target/release/`: el empaquetado MSIX recompila, y los dos binarios no son el mismo artefacto.
+  - **Riesgo residual aceptado:** macOS y Linux se compilan en CI y siguen sin probarse sobre hardware real. Se acepta porque el cambio es JS puro e idéntico en los tres WebViews, y porque la puerta de build protege a las tres plataformas.
 - **Riesgo:** Certificación en Microsoft Store o Uptodown puede rechazar el paquete por requisitos de identidad MSIX, firma o metadatos incompletos.
   - **Mitigación:** Seguir el checklist de `docs/MARKETPLACE_PUBLISHING.md` (guía basada en una publicación real previa, incluido un rechazo real) antes de enviar a certificación.
 - **Riesgo de Seguridad y Privacidad (IA/Datos):** N/A — sin credenciales, sin backend, sin datos sensibles del usuario más allá de sus atajos de teclado en `localStorage`.

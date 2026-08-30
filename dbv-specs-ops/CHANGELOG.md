@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [Sin publicar]
+
+### Fixed
+
+- **La interfaz de escritorio estaba completamente muerta.** Tauri v2 define `window.isTauri` con `Object.defineProperty` antes de que corra ningún script propio; el `const isTauri` de nivel superior de `script.js` colisionaba con él y mataba el fichero entero con un `SyntaxError` de *parseo*, así que ni su primera línea llegaba a ejecutarse. La app renderizaba perfecta —HTML y CSS no dependen del JS— y solo respondía el `textarea`, que es nativo. Afectaba a **las tres plataformas** de la v0.2.0 (Microsoft Store, Uptodown y GitHub Releases: Windows, macOS y Linux), no solo a la Store.
+- El enlace a la política de privacidad del pie apuntaba a un 404 en los dos modos: `privacy.html` y `privacidad.html` no viajaban en el bundle de escritorio ni estaban en la caché del Service Worker.
+
+### Changed
+
+- **`script.js` y `sw.js` van envueltos cada uno en su IIFE**, con cero declaraciones en el ámbito global. Elimina de raíz la clase de fallo por colisión con los globales de Tauri, en vez de protegerla nombre a nombre. Corrige de paso `docs/ARCHITECTURE.md`, que limitaba la regla a los ficheros JS *nuevos* y por tanto eximía a `script.js` — esa redacción es lo que autorizó el bug.
+- **Eliminados los 10 atributos `onclick=` inline de `index.html`**, sustituidos por `addEventListener` cableado desde dentro de la IIFE, siempre con arrow explícita. `changeSpeed` y `changeFontSize` ganan una guarda `Number.isFinite`: si algún día se cablean por referencia, el `Event` llegaría como importe y produciría `NaN` en silencio.
+- Puerta de calidad en `scripts/sync-frontend.mjs`, ejecutada en cada `dev`/`build` y en los tres workflows de release: instancia cada `.js` del bundle en un contexto `node:vm` con los globales que Tauri inyecta y aborta si el motor lanza `SyntaxError`. Usa el motor de JS real, no una regex — una heurística de texto se comía las formas indentada, `const { x } = ...` y multi-declarador, las tres igual de letales.
+- Caché del Service Worker a `v3.9`.
+
+### Security
+
+- El guion del usuario deja de pasar por `innerHTML`. Con `csp: null` y `withGlobalTauri: true`, un `<img onerror>` incrustado en un `.md` abierto tenía acceso a `window.__TAURI__.core.invoke` y a la red. Se usa `textContent`; el reemplazo por `<br>` era redundante porque `#teleprompter-text` ya declara `white-space: pre-wrap`.
+
 ## [0.2.0] — 2026-08-22
 
 ### Added (Versión Escritorio Nativa + Rediseño Studio Instrument)

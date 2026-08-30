@@ -8,6 +8,12 @@
  * https://github.com/davidbuenov/dbv-teleprompter/blob/main/LICENSE
  */
 
+// Todo el fichero vive dentro de esta IIFE. Los scripts clasicos comparten un unico ambito
+// global, y ahi Tauri inyecta nombres propios (`isTauri`, `__TAURI__`) con Object.defineProperty:
+// una colision no da un error depurable, rompe el fichero entero en *parseo* y ni su primera
+// linea llega a correr. Ver dbv-specs-ops/docs/ARCHITECTURE.md y NATIVE_DESKTOP_APPS.md §3.
+(function () {
+
 // ─────────────────────────────────────────────
 // Translations (i18n) — English & Spanish
 // ─────────────────────────────────────────────
@@ -609,6 +615,13 @@ function updateSpeedDisplay() {
 }
 
 function changeSpeed(amount) {
+    // Guarda deliberada: si algun dia alguien cablea este handler por referencia
+    // (addEventListener('click', changeSpeed)), `amount` seria el objeto Event y currentSpeed
+    // pasaria a NaN sin que nada avisara. Falla ruidoso en vez de silencioso.
+    if (!Number.isFinite(amount)) {
+        console.error('changeSpeed esperaba un numero y recibio:', amount);
+        return;
+    }
     currentSpeed += amount;
     if (currentSpeed < 0.1) currentSpeed = 0.1;
     if (currentSpeed > 10) currentSpeed = 10;
@@ -623,6 +636,10 @@ function updateFontSizeDisplay() {
 }
 
 function changeFontSize(amount) {
+    if (!Number.isFinite(amount)) {
+        console.error('changeFontSize esperaba un numero y recibio:', amount);
+        return;
+    }
     currentFontSize += amount;
     if (currentFontSize < 10) currentFontSize = 10;
     if (currentFontSize > 200) currentFontSize = 200;
@@ -822,7 +839,34 @@ document.addEventListener('DOMContentLoaded', () => {
     if (scriptTitleInput) {
         scriptTitleInput.addEventListener('input', saveScriptTitle);
     }
+
+    wireControls();
 });
+
+// Sustituye a los atributos `onclick=` que vivian en index.html. Dejaron de ser viables al
+// encerrar este fichero en su IIFE: un atributo inline no puede resolver una funcion que ya no
+// es global. Ver dbv-specs-ops/docs/ARCHITECTURE.md, seccion Estilo de Codigo.
+//
+// REGLA: siempre arrow explicita, nunca referencia directa — ni siquiera en los handlers sin
+// argumento. `addEventListener('click', changeSpeed)` entregaria el Event como `amount`. Y con
+// `loadKeyConfig` colaria por accidente, porque el Event es truthy; un patron incorrecto que
+// aparenta funcionar es como se propaga. Por eso la regla es uniforme y sin excepciones.
+//
+// Los importes numericos son literales aqui, no `data-*` del DOM: un atributo mal escrito o
+// ausente daria NaN en silencio, que es justo el fallo que estamos cerrando.
+function wireControls() {
+    const on = (el, handler) => { if (el) el.addEventListener('click', handler); };
+
+    document.querySelectorAll('[data-action="toggle-keys"]')
+        .forEach(el => el.addEventListener('click', () => toggleKeyConfig()));
+
+    on(document.getElementById('btn-speed-down'), () => changeSpeed(-0.1));
+    on(document.getElementById('btn-speed-up'), () => changeSpeed(0.1));
+    on(document.getElementById('btn-font-down'), () => changeFontSize(-2));
+    on(document.getElementById('btn-font-up'), () => changeFontSize(2));
+    on(document.getElementById('btn-save-keys'), () => saveKeyConfig());
+    on(document.getElementById('btn-reset-keys'), () => loadKeyConfig(true));
+}
 
 // PWA Service Worker Registration — web mode only.
 //
@@ -858,4 +902,5 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(names => names.forEach(name => caches.delete(name)))
       .catch(() => { /* no cache storage available */ });
   }
+})();
 })();

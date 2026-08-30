@@ -60,8 +60,11 @@
 ### Estilo de Código
 
 - **Paradigma:** Imperativo/procedural simple en JS vanilla, sin frameworks.
-- **Convenciones:** Cualquier fichero JS nuevo debe envolverse en su propia IIFE (los scripts clásicos comparten ámbito global; una colisión de identificador entre `script.js` y un fichero nuevo del puente Tauri rompe el parseo del segundo por completo — ver `docs/NATIVE_DESKTOP_APPS.md` §3).
-- **Complejidad máxima por función:** No formalizada; el código actual es corto (310 líneas en `script.js`).
+- **Convenciones:** **Todo** fichero JS propio debe envolverse en su propia IIFE — `script.js` y `sw.js` incluidos, no solo los ficheros nuevos. Los scripts clásicos comparten un único ámbito global, y ahí Tauri ya inyecta nombres propios (`isTauri`, `__TAURI__`…) con `Object.defineProperty`: una colisión de identificador no da un error de ejecución depurable, rompe el fichero entero en *parseo* y ninguna de sus líneas llega a correr. Ver `docs/NATIVE_DESKTOP_APPS.md` §3.
+  > Esta regla decía antes "cualquier fichero JS **nuevo**". Esa redacción eximía a `script.js` por ser preexistente, y fue lo que permitió que `const isTauri` entrara en su ámbito global en `9aae73e` y saliera publicado en la v0.2.0 con la interfaz muerta en Windows, macOS y Linux. La exención está retirada a propósito: no se reintroduce.
+- **Prohibido `onclick=` (y cualquier `on*=`) inline en el HTML.** Es consecuencia directa de lo anterior: con el JS encerrado en una IIFE, un atributo inline no puede resolver la función porque esta ya no es global. Todo evento se cablea con `addEventListener` desde dentro de la IIFE, y **siempre con arrow explícita** (`() => changeSpeed(-0.1)`), nunca por referencia: `addEventListener('click', changeSpeed)` entregaría el objeto `Event` como argumento y produciría `NaN` de forma silenciosa.
+- **Verificación automática:** `scripts/sync-frontend.mjs` corre en `beforeDevCommand`/`beforeBuildCommand` y aborta el build si algún `.js` del bundle no sobrevive a la instanciación con los globales de Tauri. Es una comprobación con el motor de JS real (`node:vm`), no una heurística de texto.
+- **Complejidad máxima por función:** No formalizada; `script.js` ronda las 860 líneas.
 
 ### Gestión de Estado
 

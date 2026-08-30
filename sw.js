@@ -9,6 +9,10 @@
  * La app de escritorio NO registra este worker: los assets ya viajan dentro del binario.
  * Ver el final de script.js.
  */
+
+// Envuelto en una IIFE por la misma regla que script.js: ningun fichero JS propio declara
+// nada en el ambito global. Ver dbv-specs-ops/docs/ARCHITECTURE.md, seccion Estilo de Codigo.
+(function () {
 const CACHE_NAME = 'teleprompter-cache-v3.9'; // Increment version if you change cached files
 const urlsToCache = [
   '.', // Alias for index.html
@@ -107,3 +111,4 @@ self.addEventListener('fetch', event => {
       })
   );
 });
+})();
