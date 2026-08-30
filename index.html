@@ -21,6 +21,39 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 
+    <!-- Global error capturer. Va PRIMERO y en el `<head>`, antes que cualquier script externo, por una
+         razón concreta: un capturador definido dentro del fichero que falla nunca llega a registrarse.
+         Si `script.js` muere en parseo, la app renderiza perfecta y la interfaz queda muerta sin un solo
+         síntoma — exactamente lo que se publicó en la v0.2.0 a las tres plataformas. En un WebView de
+         escritorio no hay DevTools que abrir, así que este banner es el equivalente práctico de la
+         consola. Lo exige `dbv-specs-ops/docs/NATIVE_DESKTOP_APPS.md` §3. -->
+    <script>
+        (function () {
+            var mostrado = false;
+            function pintar(mensaje) {
+                if (mostrado) return;          // un solo banner: el primer error es el que importa
+                mostrado = true;
+                try {
+                    var b = document.createElement('div');
+                    b.setAttribute('role', 'alert');
+                    b.style.cssText = 'position:fixed;inset:0 0 auto 0;z-index:2147483647;' +
+                        'background:#b3261e;color:#fff;padding:12px 16px;' +
+                        'font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;' +
+                        'white-space:pre-wrap;word-break:break-word';
+                    b.textContent = 'Error de JavaScript — la interfaz puede no responder:\n' + mensaje;
+                    (document.body || document.documentElement).appendChild(b);
+                } catch (e) { /* si ni esto funciona, no hay nada que hacer */ }
+            }
+            window.addEventListener('error', function (e) {
+                pintar((e && e.message ? e.message : 'error desconocido') +
+                    (e && e.filename ? '\n' + e.filename + ':' + e.lineno : ''));
+            }, true);
+            window.addEventListener('unhandledrejection', function (e) {
+                pintar('Promesa rechazada sin manejar: ' + (e && e.reason ? e.reason : 'sin motivo'));
+            });
+        })();
+    </script>
+
     <!-- Sets data-theme and lang before first paint (stored preference, else system), so the app never
          flashes the wrong theme or language. Kept out of script.js on purpose: it must run before
          style.css is even requested. -->
@@ -59,7 +92,7 @@
                     <button id="lang-en" class="lang-btn" type="button">EN</button>
                 </div>
                 <button id="theme-toggle" class="ghost-btn" type="button">Light</button>
-                <button id="show-key-config" class="ghost-btn" type="button" data-action="toggle-keys" data-i18n="header.keys" data-i18n-title="header.keysTitle">Keys</button>
+                <button class="ghost-btn" type="button" data-action="toggle-keys" data-i18n="header.keys" data-i18n-title="header.keysTitle">Keys</button>
             </div>
         </header>
 

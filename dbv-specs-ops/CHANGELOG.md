@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Sin publicar]
 
+### Added
+
+- **Capturador global de errores de JavaScript**, inline y primero del `<head>`, que pinta el fallo en un banner rojo dentro de la propia página. Es la mitad no implementada de `docs/NATIVE_DESKTOP_APPS.md` §3: la IIFE cierra un mecanismo concreto de muerte silenciosa, pero el capturador hace **visible** cualquier otro. En un WebView de escritorio no hay DevTools que abrir, así que el banner es el equivalente práctico de la consola — y es lo que habría convertido el fallo de la v0.2.0 en obvio a los cinco segundos en vez de después de publicarlo.
+
 ### Fixed
 
 - **La interfaz de escritorio estaba completamente muerta.** Tauri v2 define `window.isTauri` con `Object.defineProperty` antes de que corra ningún script propio; el `const isTauri` de nivel superior de `script.js` colisionaba con él y mataba el fichero entero con un `SyntaxError` de *parseo*, así que ni su primera línea llegaba a ejecutarse. La app renderizaba perfecta —HTML y CSS no dependen del JS— y solo respondía el `textarea`, que es nativo. Afectaba a **las tres plataformas** de la v0.2.0 (Microsoft Store, Uptodown y GitHub Releases: Windows, macOS y Linux), no solo a la Store.
@@ -18,8 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - **`script.js` y `sw.js` van envueltos cada uno en su IIFE**, con cero declaraciones en el ámbito global. Elimina de raíz la clase de fallo por colisión con los globales de Tauri, en vez de protegerla nombre a nombre. Corrige de paso `docs/ARCHITECTURE.md`, que limitaba la regla a los ficheros JS *nuevos* y por tanto eximía a `script.js` — esa redacción es lo que autorizó el bug.
 - **Eliminados los 10 atributos `onclick=` inline de `index.html`**, sustituidos por `addEventListener` cableado desde dentro de la IIFE, siempre con arrow explícita. `changeSpeed` y `changeFontSize` ganan una guarda `Number.isFinite`: si algún día se cablean por referencia, el `Event` llegaría como importe y produciría `NaN` en silencio.
-- Puerta de calidad en `scripts/sync-frontend.mjs`, ejecutada en cada `dev`/`build` y en los tres workflows de release: instancia cada `.js` del bundle en un contexto `node:vm` con los globales que Tauri inyecta y aborta si el motor lanza `SyntaxError`. Usa el motor de JS real, no una regex — una heurística de texto se comía las formas indentada, `const { x } = ...` y multi-declarador, las tres igual de letales.
-- Caché del Service Worker a `v3.9`.
+- **Puerta de calidad en `scripts/sync-frontend.mjs`**, ejecutada en cada `dev`/`build` y en los tres workflows de release vía `tauri-action`. Comprueba tres cosas: (1) que cada `.js` del bundle sobreviva a la instanciación en un contexto `node:vm` con los globales que Tauri inyecta; (2) que **no filtre nada al ámbito global**, que es lo que de verdad vigila la regla de la IIFE — la comprobación (1) sola solo salta ante la conjunción "sin envolver *y* con un nombre colisionante", así que un fichero sin IIFE con nombres inocentes la pasaba limpio y quedaba armado; (3) que ningún `.html` del bundle tenga manejadores `on*=` inline, el invariante que este trabajo crea y que si no nadie sostendría. La (1) usa el motor de JS real, no una regex: una heurística de texto se comía las formas indentada, `const { x } = ...` y multi-declarador, las tres igual de letales.
+- **Caché del Service Worker a `v4.0`, y `cache.addAll` con `cache: 'reload'`.** El refactor volvió `index.html` y `script.js` mutuamente obligatorios: un `index.html` viejo (con `onclick=`) servido junto a un `script.js` nuevo (con IIFE) da botones muertos y cero errores. Sin `'reload'`, los `fetch` de la reinstalación pasan por la caché HTTP del navegador y nada garantiza que ambos ficheros se revaliden en la misma ventana — reproduciría el fallo de la v0.2.0 en el canal PWA, y encima sin ser reproducible en local.
 
 ### Security
 

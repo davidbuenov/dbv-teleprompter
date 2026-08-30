@@ -13,7 +13,7 @@
 // Envuelto en una IIFE por la misma regla que script.js: ningun fichero JS propio declara
 // nada en el ambito global. Ver dbv-specs-ops/docs/ARCHITECTURE.md, seccion Estilo de Codigo.
 (function () {
-const CACHE_NAME = 'teleprompter-cache-v3.9'; // Increment version if you change cached files
+const CACHE_NAME = 'teleprompter-cache-v4.0'; // Increment version if you change cached files
 const urlsToCache = [
   '.', // Alias for index.html
   'index.html',
@@ -36,7 +36,11 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        // `cache: 'reload'` puentea la cache HTTP del navegador. Sin el, al reinstalarse el
+        // worker estos fetch pueden servirse del disco: index.html viejo junto a script.js
+        // nuevo son incompatibles desde que los handlers salieron del HTML, y el sintoma
+        // seria botones muertos sin ningun error. Ver dbv-specs-ops/CHANGELOG.md [0.2.1].
+        return cache.addAll(urlsToCache.map(u => new Request(u, { cache: 'reload' })));
       })
       .then(() => self.skipWaiting()) // Activate new SW immediately
   );

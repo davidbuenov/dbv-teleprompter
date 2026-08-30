@@ -57,14 +57,49 @@ function findFatalError(source) {
     for (const name of TAURI_INJECTED_GLOBALS) {
         vm.runInContext(`Object.defineProperty(globalThis, ${JSON.stringify(name)}, { value: true });`, context);
     }
+
+    const antes = new Set(vm.runInContext("Object.getOwnPropertyNames(globalThis)", context));
+
     try {
         vm.runInContext(source, context);
     } catch (error) {
         // `instanceof` NO vale aqui: el error nace en el realm del contexto `vm`, asi que su
         // constructor no es el SyntaxError de este realm y la comprobacion daria siempre false.
         if (error.name === "SyntaxError") return error.message;
+        // Cualquier otro error (tipicamente `document is not defined`) significa que el fichero paso
+        // la instanciacion y solo se queja de que aqui no hay DOM. Seguimos: las fugas de mas abajo
+        // ya se han producido, porque `var` y `function` se enganchan al objeto global al instanciar.
     }
+
+    // Segunda comprobacion, y la que de verdad vigila la regla de la IIFE. La de arriba solo salta
+    // ante la CONJUNCION "fichero sin envolver Y nombre que Tauri tambien usa": un `.js` sin IIFE con
+    // nombres inocentes la pasa limpio hoy y queda armado para el dia que alguien elija un nombre
+    // colisionante. Un fichero correctamente envuelto no filtra NADA al objeto global; uno sin
+    // envolver filtra sus `var` y sus `function`.
+    //
+    // Limitacion honesta, mejor escrita que fingida: un fichero sin envolver que solo declare
+    // `const`/`let`/`class` no filtra nada y pasa las dos comprobaciones. Cubrir tambien ese caso
+    // exigiria un chequeo estructural del top level, que no compensa por ahora.
+    const fugas = vm.runInContext("Object.getOwnPropertyNames(globalThis)", context)
+        .filter((name) => !antes.has(name));
+    if (fugas.length > 0) {
+        return `declara en el ambito global: ${fugas.join(", ")} (el fichero no esta envuelto en una IIFE)`;
+    }
+
     return null;
+}
+
+// El otro invariante que este proyecto acaba de crear y que nadie vigilaba: con el JS encerrado en
+// una IIFE, un `onclick=` inline no puede resolver la funcion y el boton queda inerte SIN ningun
+// error en consola — el mismo sintoma que costo la v0.2.0, y mas facil de reintroducir todavia,
+// porque escribir `onclick=` es lo que cualquiera hace por defecto al anadir un boton a HTML plano.
+// Aqui una expresion regular SI es la herramienta correcta: buscamos un atributo HTML literal, no
+// estamos aproximando la gramatica de un lenguaje.
+const MANEJADOR_INLINE = /\son[a-z]+\s*=\s*["']/gi;
+
+function findInlineHandlers(source) {
+    const encontrados = [...source.matchAll(MANEJADOR_INLINE)].map((m) => m[0].trim());
+    return encontrados.length > 0 ? [...new Set(encontrados)] : null;
 }
 
 // Sobre la lista de assets, no sobre un nombre de fichero codificado a mano: cualquier `.js` que se
@@ -73,12 +108,30 @@ for (const asset of assets.filter((name) => name.endsWith(".js"))) {
     const fatal = findFatalError(await readFile(join(repoRoot, asset), "utf8"));
     if (fatal) {
         console.error(`
-${asset} no sobrevive a la instanciación con los globales que Tauri inyecta:
+${asset} incumple la regla de ámbito global:
 
     ${fatal}
 
-Eso mata el fichero JS completo antes de su primera línea: la app abre y renderiza, pero ningún
-botón responde. Renombra el identificador (p. ej. \`runningInTauri\`) o envuelve el fichero en una IIFE.
+Los scripts clásicos comparten un único ámbito, y ahí Tauri inyecta nombres propios. Una colisión
+rompe el fichero entero en *parseo* — la app abre y renderiza, pero ningún botón responde — y un
+fichero sin envolver es esa colisión esperando a que alguien elija el nombre equivocado.
+
+Envuelve el fichero en su propia IIFE: \`(function () {\` … \`})();\`
+Ver dbv-specs-ops/docs/ARCHITECTURE.md, sección Estilo de Código.
+`);
+        process.exit(1);
+    }
+}
+
+for (const asset of assets.filter((name) => name.endsWith(".html"))) {
+    const inline = findInlineHandlers(await readFile(join(repoRoot, asset), "utf8"));
+    if (inline) {
+        console.error(`
+${asset} tiene manejadores de eventos inline: ${inline.join(", ")}
+
+Con el JS encerrado en una IIFE, un atributo inline no puede resolver la función porque esta ya no
+es global: el control queda inerte y no aparece ningún error en consola. Cablea el evento con
+addEventListener desde dentro de la IIFE — ver dbv-specs-ops/docs/ARCHITECTURE.md, Estilo de Código.
 `);
         process.exit(1);
     }

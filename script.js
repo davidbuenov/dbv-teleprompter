@@ -735,6 +735,27 @@ if (btnOpenFile) btnOpenFile.addEventListener('click', openFileDialog);
 if (btnSaveFile) btnSaveFile.addEventListener('click', saveScriptFile);
 if (fileInput) fileInput.addEventListener('change', handleFileSelect);
 
+// Los 10 handlers que antes eran atributos `onclick=` en index.html. Dejaron de ser viables al
+// encerrar este fichero en su IIFE: un atributo inline no puede resolver una funcion que ya no es
+// global. Ver dbv-specs-ops/docs/ARCHITECTURE.md, seccion Estilo de Codigo.
+//
+// REGLA: un handler que recibe argumentos propios se cablea con arrow explicita, nunca por
+// referencia — `addEventListener('click', changeSpeed)` entregaria el Event como `amount` y daria
+// NaN en silencio. La referencia directa se reserva a handlers que consumen el Event a proposito,
+// como `handleFileSelect` justo arriba.
+//
+// Los importes son literales aqui, no `data-*` del DOM: un atributo ausente o mal escrito devolveria
+// NaN sin que nada avisara, que es justo el fallo que este trabajo cierra.
+document.querySelectorAll('[data-action="toggle-keys"]')
+    .forEach(el => el.addEventListener('click', () => toggleKeyConfig()));
+
+document.getElementById('btn-speed-down').addEventListener('click', () => changeSpeed(-0.1));
+document.getElementById('btn-speed-up').addEventListener('click', () => changeSpeed(0.1));
+document.getElementById('btn-font-down').addEventListener('click', () => changeFontSize(-2));
+document.getElementById('btn-font-up').addEventListener('click', () => changeFontSize(2));
+document.getElementById('btn-save-keys').addEventListener('click', () => saveKeyConfig());
+document.getElementById('btn-reset-keys').addEventListener('click', () => loadKeyConfig(true));
+
 document.addEventListener('keydown', (event) => {
     const isCmdOrCtrl = event.metaKey || event.ctrlKey;
 
@@ -839,34 +860,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (scriptTitleInput) {
         scriptTitleInput.addEventListener('input', saveScriptTitle);
     }
-
-    wireControls();
 });
-
-// Sustituye a los atributos `onclick=` que vivian en index.html. Dejaron de ser viables al
-// encerrar este fichero en su IIFE: un atributo inline no puede resolver una funcion que ya no
-// es global. Ver dbv-specs-ops/docs/ARCHITECTURE.md, seccion Estilo de Codigo.
-//
-// REGLA: siempre arrow explicita, nunca referencia directa — ni siquiera en los handlers sin
-// argumento. `addEventListener('click', changeSpeed)` entregaria el Event como `amount`. Y con
-// `loadKeyConfig` colaria por accidente, porque el Event es truthy; un patron incorrecto que
-// aparenta funcionar es como se propaga. Por eso la regla es uniforme y sin excepciones.
-//
-// Los importes numericos son literales aqui, no `data-*` del DOM: un atributo mal escrito o
-// ausente daria NaN en silencio, que es justo el fallo que estamos cerrando.
-function wireControls() {
-    const on = (el, handler) => { if (el) el.addEventListener('click', handler); };
-
-    document.querySelectorAll('[data-action="toggle-keys"]')
-        .forEach(el => el.addEventListener('click', () => toggleKeyConfig()));
-
-    on(document.getElementById('btn-speed-down'), () => changeSpeed(-0.1));
-    on(document.getElementById('btn-speed-up'), () => changeSpeed(0.1));
-    on(document.getElementById('btn-font-down'), () => changeFontSize(-2));
-    on(document.getElementById('btn-font-up'), () => changeFontSize(2));
-    on(document.getElementById('btn-save-keys'), () => saveKeyConfig());
-    on(document.getElementById('btn-reset-keys'), () => loadKeyConfig(true));
-}
 
 // PWA Service Worker Registration — web mode only.
 //
