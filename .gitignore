@@ -17,6 +17,9 @@ node_modules/
 # Logs
 *.log
 
+# Servidor local del modo web (start.cmd / start.sh)
+.server.pid
+
 # Temporales e IA Artifacts
 *.tmp
 *.bak

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Sin publicar]
+## [0.2.1] — 2026-08-30
 
 ### Added
 
@@ -70,6 +70,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Versión inicial de la PWA: teleprompter con pegado de texto, velocidad y tamaño de fuente ajustables, atajos de teclado configurables guardados en `localStorage`, Service Worker para uso offline y manifest instalable.
 
 ---
+
+## Enlaces de comparación
+
+- [Sin publicar]: https://github.com/davidbuenov/dbv-teleprompter/compare/v0.2.1...HEAD
+- [0.2.1]: https://github.com/davidbuenov/dbv-teleprompter/compare/v0.2.0...v0.2.1
+- [0.2.0]: https://github.com/davidbuenov/dbv-teleprompter/releases/tag/v0.2.0
 
 ## How to read this file
 

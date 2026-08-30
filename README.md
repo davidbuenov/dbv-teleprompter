@@ -77,11 +77,22 @@ Download pre-compiled native installers directly from the [Releases Page](https:
    cd dbv-teleprompter
    ```
 
-2. **Web Mode:**
-   Open `index.html` in your browser or run a simple local server:
-   ```bash
-   python -m http.server 8080
-   ```
+2. **Web Mode (PWA):**
+
+   | Windows | macOS / Linux |
+   | --- | --- |
+   | `start.cmd` | `./start.sh` |
+   | `stop.cmd` | `./stop.sh` |
+
+   Serves the app at <http://localhost:8080> using a dependency-free Node server
+   (`scripts/serve-web.mjs`), and writes the process id to `.server.pid` so `stop` can
+   terminate it.
+
+   > **Do not just double-click `index.html`.** Service Workers only register over HTTP(S),
+   > never under `file://`, so opening the file directly does not exercise PWA mode at all —
+   > no offline cache, no install prompt. The server also logs every request and tags the ones
+   > the Service Worker issues during `cache.addAll`, which is the simplest way to confirm from
+   > outside the browser that the worker actually installed.
 
 3. **Desktop Mode (Tauri):**
    ```bash
@@ -89,6 +100,13 @@ Download pre-compiled native installers directly from the [Releases Page](https:
    npm run tauri dev      # Launch desktop app with live reload
    npm run tauri build    # Compile release installer for your OS
    ```
+
+   Both `dev` and `build` first run `npm run sync:frontend`, which copies the web files into
+   `src-tauri/frontend/` **and enforces two build gates**: no bundled `.js` may declare anything
+   in the global scope (Tauri injects its own globals there, and a collision kills the whole file
+   at parse time), and no bundled `.html` may use inline `on*=` handlers (with the JS inside an
+   IIFE, an inline attribute cannot resolve the function and the control silently goes dead).
+   Both rules are documented in `dbv-specs-ops/docs/ARCHITECTURE.md`.
 
 ---
 

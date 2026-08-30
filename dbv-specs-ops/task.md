@@ -34,11 +34,11 @@
   - [x] Atajos universales (`⌘S`/`Ctrl+S`, `⌘O`/`Ctrl+O`, `⌘Enter`, `Escape`) y menú nativo en macOS (`tauri::menu::Menu::default()`).
   - [x] Scrollbars oscuras (`::-webkit-scrollbar`) y ancho fluido al 100% de la ventana.
   - [x] Incorporada la sección §7 (DoD) en `docs/NATIVE_DESKTOP_APPS.md` y §8 en `docs/WEB_TO_DESKTOP_MIGRATION.md`.
-- [ ] **v0.2.1 — Fase A (spec):** Corregir `docs/ARCHITECTURE.md` (IIFE obligatoria en *todos* los ficheros JS, no solo los nuevos; prohibido `onclick=` inline; recuento de líneas obsoleto; `frontendDist`) y registrar en `docs/SPECIFICATIONS.md` §6 el riesgo materializado. Es la causa raíz: la spec estrecha autorizaba el bug.
-- [ ] **v0.2.1 — Fase B (envoltura):** `script.js` y `sw.js` envueltos cada uno en su IIFE. Cero declaraciones en ámbito global. Sin reindentar.
-- [ ] **v0.2.1 — Fase C (cableado):** Sustituir los 10 `onclick=` de `index.html` por `addEventListener` dentro del `DOMContentLoaded`, siempre con arrow explícita (nunca por referencia: el Event llegaría como argumento numérico y produciría `NaN` — riesgo R1). Guarda `Number.isFinite` en `changeSpeed` y `changeFontSize`.
-- [ ] **v0.2.1 — Fase D (test):** Puerta de build en verde, reconstruir MSIX y verificar sobre `target/appx/x64/` (no sobre `target/release/`, es otra compilación): 4 steppers sin `NaN`, los 10 controles vivos, diálogo nativo, privacidad, scroll. Y el SW registrando en modo web.
-- [ ] **v0.2.1 — Fase E (cierre):** `/code-simplify` del nuevo diff y `/ship` con checklist de marketplace ampliado a Uptodown (macOS `.dmg` + Windows `.exe`), no solo Microsoft Store.
+- [x] **v0.2.1 — Fase A (spec):** Corregir `docs/ARCHITECTURE.md` (IIFE obligatoria en *todos* los ficheros JS, no solo los nuevos; prohibido `onclick=` inline; recuento de líneas obsoleto; `frontendDist`) y registrar en `docs/SPECIFICATIONS.md` §6 el riesgo materializado. Es la causa raíz: la spec estrecha autorizaba el bug.
+- [x] **v0.2.1 — Fase B (envoltura):** `script.js` y `sw.js` envueltos cada uno en su IIFE. Cero declaraciones en ámbito global. Sin reindentar.
+- [x] **v0.2.1 — Fase C (cableado):** Sustituir los 10 `onclick=` de `index.html` por `addEventListener` dentro del `DOMContentLoaded`, siempre con arrow explícita (nunca por referencia: el Event llegaría como argumento numérico y produciría `NaN` — riesgo R1). Guarda `Number.isFinite` en `changeSpeed` y `changeFontSize`.
+- [x] **v0.2.1 — Fase D (test):** Puerta de build en verde, reconstruir MSIX y verificar sobre `target/appx/x64/` (no sobre `target/release/`, es otra compilación): 4 steppers sin `NaN`, los 10 controles vivos, diálogo nativo, privacidad, scroll. Y el SW registrando en modo web.
+- [x] **v0.2.1 — Fase E (cierre):** `/code-simplify` del nuevo diff y `/ship` con checklist de marketplace ampliado a Uptodown (macOS `.dmg` + Windows `.exe`), no solo Microsoft Store.
 - [ ] **Preparar publicación en Microsoft Store:** Seguir checklist de `dbv-specs-ops/docs/MARKETPLACE_PUBLISHING.md` (identidad MSIX, formulario de certificación).
 - [ ] **Preparar publicación en Uptodown:** Seguir la parte correspondiente de `dbv-specs-ops/docs/MARKETPLACE_PUBLISHING.md`.
 
@@ -47,6 +47,6 @@
 ## 🔄 Context Snapshot / Snapshot de Contexto
 
 > **Last update / Última actualización:** 2026-08-30
-> **Exact point / Punto exacto:** v0.2.0 publicada en Microsoft Store, Uptodown y GitHub Releases con la interfaz MUERTA en las tres plataformas (`const isTauri` colisionaba con un global de Tauri y mataba `script.js` entero en parseo). Arreglo mínimo aplicado y verificado sobre el binario real; puerta de build añadida en `sync-frontend.mjs`. `/spec` y `/plan` de la v0.2.1 completados — ver `implementation_plan.md`.
-> **Pending / Pendiente:** Aprobación del plan y ejecución de las Fases A-E. El MSIX 0.2.1 ya construido queda invalidado en cuanto se toque `script.js`.
-> **Next step / Próximo paso:** `/build` — Fase A (corregir `ARCHITECTURE.md`), luego envoltura IIFE y cableado de los 10 `onclick`.
+> **Exact point / Punto exacto:** v0.2.1 lista para publicar. Corregido el fallo que dejó la interfaz muerta en las tres plataformas de la v0.2.0, y retirada la deuda que lo permitió: IIFE en todo el JS propio, cero `on*=` inline, puerta de build con tres invariantes, capturador global de errores y `cache: 'reload'` en el Service Worker. Verificado sobre el binario del MSIX y sobre el modo web. Ver `walkthrough.md`.
+> **Pending / Pendiente:** Reverificar a mano diálogo nativo de guardar, conmutadores de tema e idioma y enlace de privacidad sobre el binario final (no se han vuelto a pulsar desde el último rebuild). Después: push del tag y envío a Microsoft Store y Uptodown (macOS `.dmg` + Windows `.exe`, ambas afectadas).
+> **Next step / Próximo paso:** `git push origin feat/tauri-desktop --tags` y lanzar los tres workflows de release.

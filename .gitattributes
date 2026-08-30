@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Los .cmd requieren CRLF: con LF, CMD mis-parsea lineas enteras del batch.
+*.cmd text eol=crlf
+
+# Los .sh requieren LF: con CRLF, el shebang se rompe en Linux/macOS.
+*.sh text eol=lf
